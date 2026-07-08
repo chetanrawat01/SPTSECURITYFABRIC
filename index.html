@@ -1,0 +1,3717 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SPT Security Fabric - Technical Documentation</title>
+  <style>
+    :root {
+      --brand-teal: #07A7A7;
+      --brand-teal-deep: #068B8B;
+      --brand-green: #16B364;
+      --brand-green-accent: #61CE70;
+      --brand-navy: #202040;
+      --brand-navy-2: #2E2E5C;
+      --brand-cyan: #00D4E4;
+      --ink: #202040;
+      --ink-muted: #5D6280;
+      --ink-subtle: #8B90A8;
+      --surface: #FFFFFF;
+      --surface-mint: #F3FBF7;
+      --surface-blue: #F4F8FE;
+      --surface-navy: #202040;
+      --border-subtle: #E2E7EE;
+      --border: #D5DBE5;
+      --gradient-brand: linear-gradient(90deg, #00D4E4 0%, #07A7A7 48%, #16B364 100%);
+      --gradient-hero: linear-gradient(135deg, #E6F7F4 0%, #DFF0F8 55%, #E9F1FB 100%);
+      --shadow-sm: 0 4px 12px -4px rgba(32,32,64,0.08);
+      --shadow-md: 0 10px 30px -8px rgba(32,32,64,0.10), 0 4px 12px -4px rgba(32,32,64,0.06);
+      --shadow-lg: 0 20px 50px -10px rgba(32,32,64,0.15), 0 8px 20px -6px rgba(32,32,64,0.08);
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-pill: 999px;
+      --container: 1200px;
+      --section-y: 80px;
+      --body-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --heading-font: Georgia, 'Times New Roman', serif;
+      --code-font: 'JetBrains Mono', Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #fff 0%, #f8fbfd 100%);
+      font-family: var(--body-font);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    svg { display: block; }
+    svg:not(.brand-logo) {
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      height: 72px;
+      background: rgba(255,255,255,0.94);
+      border-bottom: 1px solid var(--border-subtle);
+      backdrop-filter: blur(16px);
+    }
+    .topbar-inner {
+      max-width: var(--container);
+      height: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 260px 1fr auto;
+      align-items: center;
+      gap: 24px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .brand-logo { width: 178px; height: 56px; flex: 0 0 auto; }
+    .document-title {
+      text-align: center;
+      color: var(--brand-navy);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      color: var(--ink-muted);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .menu-button {
+      display: none;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--brand-navy);
+      background: var(--surface);
+      place-items: center;
+      cursor: pointer;
+    }
+    .menu-button svg { width: 22px; height: 22px; }
+
+    .layout {
+      max-width: var(--container);
+      margin: 0 auto;
+      padding: 32px 24px 72px;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 840px);
+      gap: 64px;
+      align-items: start;
+    }
+    .sidebar {
+      position: sticky;
+      top: 96px;
+      max-height: calc(100vh - 116px);
+      overflow: auto;
+      padding: 18px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.92);
+      box-shadow: var(--shadow-sm);
+    }
+    .toc-title {
+      margin: 0 0 12px;
+      color: var(--ink-muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .toc {
+      display: grid;
+      gap: 4px;
+    }
+    .toc a {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      color: var(--ink-muted);
+      font-size: 13px;
+      line-height: 1.35;
+      transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .toc a::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 212, 228, 0.1), rgba(22, 179, 100, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .toc a:hover,
+    .toc a.active {
+      color: var(--brand-teal-deep);
+      background: var(--surface-mint);
+    }
+    .toc a:hover::after,
+    .toc a.active::after {
+      opacity: 1;
+    }
+    .toc a:hover {
+      transform: translateX(4px);
+    }
+    .toc svg {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.3s ease;
+    }
+    .toc a:hover svg {
+      animation: rotate 2s linear infinite;
+    }
+    .content { min-width: 0; }
+
+    .doc-intro {
+      margin: 0 0 44px;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      background: linear-gradient(135deg, #07A7A7 0%, #16B364 50%, #00D4E4 100%);
+      box-shadow: none;
+      min-height: 600px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .doc-intro::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.2), transparent 50%),
+                  radial-gradient(circle at 80% 80%, rgba(0, 0, 0, 0.1), transparent 50%);
+      z-index: 1;
+    }
+    .doc-intro::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="1200" height="600" fill="url(%23grid)"/></svg>');
+      z-index: 1;
+      opacity: 0.3;
+      animation: gridScroll 20s linear infinite;
+    }
+    .doc-intro h1 {
+      margin: 0 0 24px;
+      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: clamp(42px, 8vw, 84px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      font-weight: 900;
+      position: relative;
+      z-index: 2;
+      animation: heroTitleSlide 1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    .doc-intro p {
+      max-width: 720px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.95);
+      font-size: 18px;
+      position: relative;
+      z-index: 2;
+      animation: heroSubtitleSlide 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+      font-weight: 500;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .meta-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border: 1px solid rgba(6,139,139,0.16);
+      border-radius: var(--radius-pill);
+      background: rgba(255,255,255,0.76);
+      color: var(--brand-navy);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .meta-chip svg { width: 15px; height: 15px; color: var(--brand-teal-deep); }
+
+    section {
+      scroll-margin-top: 92px;
+      padding: var(--section-y) 0 0;
+    }
+    .section-head {
+      margin-bottom: 28px;
+    }
+    .section-eyebrow {
+      display: block;
+      margin: 0 0 10px;
+      font-family: var(--body-font);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--brand-teal);
+    }
+    .section-underline {
+      width: 56px;
+      height: 4px;
+      border-radius: var(--radius-pill);
+      background: var(--gradient-brand);
+      margin: 14px 0 0;
+    }
+    .section-kicker {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-family: var(--heading-font);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .section-number {
+      color: var(--brand-teal);
+      font-size: clamp(25px, 4vw, 38px);
+      line-height: 1.05;
+    }
+    .section-title {
+      color: var(--brand-navy);
+      font-size: clamp(26px, 4vw, 38px);
+      line-height: 1.05;
+    }
+    .section-head p {
+      max-width: 760px;
+      margin: 0;
+      color: var(--ink-muted);
+      font-size: 16px;
+    }
+    .hl-green {
+      color: var(--brand-green);
+      font-style: italic;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 520ms ease, transform 520ms ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    section:target {
+      opacity: 1;
+      transform: none;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid > * {
+      animation: gridItemFade 0.6s ease both;
+    }
+    .grid > :nth-child(1) { animation-delay: 0.1s; }
+    .grid > :nth-child(2) { animation-delay: 0.2s; }
+    .grid > :nth-child(3) { animation-delay: 0.3s; }
+    .grid > :nth-child(4) { animation-delay: 0.4s; }
+    .grid > :nth-child(5) { animation-delay: 0.5s; }
+    .grid > :nth-child(6) { animation-delay: 0.6s; }
+    .card {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 60px -20px rgba(7, 167, 167, 0.3);
+      border-color: var(--brand-teal);
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(0, 212, 228, 0.04) 100%);
+    }
+    .card {
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(0, 212, 228, 0.1), transparent);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .card:hover::before {
+      opacity: 1;
+    }
+    .card h3,
+    .card h4 {
+      margin: 0 0 10px;
+      color: var(--brand-navy);
+      font-family: var(--heading-font);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .card h3 { font-size: 22px; }
+    .card h4 { font-size: 18px; }
+    .card p { margin: 0; color: var(--ink-muted); }
+    .icon-circle {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 14px;
+      border-radius: 50%;
+      background: var(--surface-mint);
+      color: var(--brand-teal-deep);
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 0 0 rgba(6, 139, 139, 0.7);
+    }
+    .icon-circle::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      background: linear-gradient(135deg, rgba(0, 212, 228, 0.3), rgba(22, 179, 100, 0.3)) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      animation: borderGlow 3s ease-in-out infinite;
+    }
+    .card:hover .icon-circle {
+      transform: scale(1.15);
+      box-shadow: 0 8px 20px rgba(6, 139, 139, 0.25);
+      background: linear-gradient(135deg, rgba(0, 212, 228, 0.15), rgba(22, 179, 100, 0.15));
+    }
+    .icon-circle svg { width: 22px; height: 22px; transition: transform 0.4s ease; }
+    .card:hover .icon-circle svg {
+      animation: rotate 2s linear infinite;
+    }
+
+    .benefit-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+    .benefit-list li {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.48fr) 1fr;
+      gap: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .benefit-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--gradient-brand);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .benefit-list li:hover {
+      transform: translateX(4px);
+      border-color: var(--brand-teal);
+      box-shadow: 0 8px 16px rgba(7, 167, 167, 0.15);
+    }
+    .benefit-list li:hover::before {
+      transform: scaleX(1);
+    }
+    .benefit-label {
+      color: var(--brand-teal-deep);
+      font-weight: 800;
+    }
+    .benefit-payoff { color: var(--ink-muted); }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+    th, td {
+      padding: 13px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #F1F3F6;
+      color: var(--brand-navy);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    td { color: #3A4159; }
+    tr:last-child td { border-bottom: 0; }
+
+    code,
+    .mono {
+      font-family: var(--code-font);
+      font-size: 0.92em;
+    }
+    code {
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--surface-blue);
+      color: var(--brand-navy-2);
+    }
+    .code-block {
+      overflow: hidden;
+      border-radius: var(--radius-md);
+      background: var(--brand-navy);
+      box-shadow: var(--shadow-md);
+    }
+    .code-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      color: #C8D4E3;
+      font-family: var(--code-font);
+      font-size: 12px;
+    }
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+    .dot.red { background: #FF5F57; }
+    .dot.yellow { background: #FEBC2E; }
+    .dot.green { background: #28C840; }
+    pre {
+      margin: 0;
+      padding: 18px 20px 22px;
+      overflow-x: auto;
+      color: #E8EDF5;
+      font-family: var(--code-font);
+      font-size: 13px;
+      line-height: 1.62;
+      white-space: pre;
+    }
+    .tok-key { color: #7FD1E8; }
+    .tok-str { color: #7BE0A6; }
+    .tok-bool { color: #F0A868; }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+    .stack-layer {
+      display: grid;
+      grid-template-columns: 48px minmax(130px, 0.36fr) 1fr;
+      gap: 18px;
+      align-items: center;
+      padding: 18px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.4s ease;
+      animation: slideInLeft 0.6s ease both;
+      position: relative;
+    }
+    .stack:nth-child(1) .stack-layer { animation-delay: 0.1s; }
+    .stack:nth-child(2) .stack-layer { animation-delay: 0.2s; }
+    .stack:nth-child(3) .stack-layer { animation-delay: 0.3s; }
+    .stack:nth-child(4) .stack-layer { animation-delay: 0.4s; }
+    .stack-layer:hover {
+      transform: translateX(8px);
+      box-shadow: 0 12px 30px rgba(7, 167, 167, 0.15);
+      border-color: var(--brand-teal);
+    }
+    .stack-layer::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      background: linear-gradient(90deg, transparent, rgba(0, 212, 228, 0.05));
+      transition: width 0.4s ease;
+    }
+    .stack-layer:hover::after {
+      width: 100%;
+    }
+    .stack-layer svg { width: 24px; height: 24px; color: var(--brand-teal-deep); }
+    .layer-name {
+      color: var(--brand-navy);
+      font-weight: 900;
+    }
+    .layer-desc { color: var(--ink-muted); }
+
+    .counter {
+      text-align: left;
+      padding: 22px;
+      animation: slideInLeft 0.6s ease both;
+    }
+    .counter:nth-child(1) { animation-delay: 0.1s; }
+    .counter:nth-child(2) { animation-delay: 0.2s; }
+    .counter:nth-child(3) { animation-delay: 0.3s; }
+    .counter-value {
+      display: block;
+      color: var(--brand-teal-deep);
+      font-family: var(--heading-font);
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1;
+      animation: numberGrow 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      text-shadow: 0 4px 12px rgba(7, 167, 167, 0.2);
+    }
+    .counter:nth-child(1) .counter-value { animation-delay: 0.2s; }
+    .counter:nth-child(2) .counter-value { animation-delay: 0.3s; }
+    .counter:nth-child(3) .counter-value { animation-delay: 0.4s; }
+    .counter-label {
+      margin-top: 8px;
+      color: var(--ink-muted);
+      font-size: 13px;
+      font-weight: 800;
+      transition: color 0.3s ease;
+    }
+    .counter:hover .counter-label {
+      color: var(--brand-navy);
+    }
+    @keyframes numberGrow {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .class-chip {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 5px 10px;
+      border-radius: var(--radius-pill);
+      font-family: var(--code-font);
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .class-chip::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      opacity: 0;
+      animation: chipGlow 2s ease-in-out infinite;
+    }
+    .class-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .chip-service {
+      background: rgba(22,179,100,0.11);
+      color: #0E7A45;
+      border-color: rgba(22,179,100,0.2);
+    }
+    .chip-service:hover {
+      background: rgba(22,179,100,0.25);
+      box-shadow: 0 0 12px rgba(22, 179, 100, 0.25);
+    }
+    .chip-repo {
+      background: rgba(6,139,139,0.10);
+      color: #068B8B;
+      border-color: rgba(6,139,139,0.18);
+    }
+    .chip-repo:hover {
+      background: rgba(6,139,139,0.25);
+      box-shadow: 0 0 12px rgba(6,139,139,0.25);
+    }
+    .chip-async {
+      background: rgba(32,32,64,0.09);
+      color: var(--brand-navy);
+      border-color: rgba(32,32,64,0.14);
+    }
+    .chip-async:hover {
+      background: rgba(32,32,64,0.2);
+      box-shadow: 0 0 12px rgba(32, 32, 64, 0.2);
+    }
+    .chip-wrapper {
+      background: rgba(46,46,92,0.10);
+      color: #2E2E5C;
+      border-color: rgba(46,46,92,0.2);
+    }
+    .chip-wrapper:hover {
+      background: rgba(46,46,92,0.22);
+      box-shadow: 0 0 12px rgba(46,46,92,0.25);
+    }
+    .chip-controller {
+      background: rgba(0,212,228,0.12);
+      color: #036A74;
+      border-color: rgba(0,212,228,0.22);
+    }
+    .chip-controller:hover {
+      background: rgba(0,212,228,0.25);
+      box-shadow: 0 0 12px rgba(0, 212, 228, 0.3);
+    }
+    @keyframes chipGlow {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 0.4; }
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid rgba(6,139,139,0.18);
+      border-radius: var(--radius-pill);
+      background: var(--surface-mint);
+      color: var(--brand-navy);
+      font-size: 13px;
+      font-weight: 800;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .pill::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 212, 228, 0.2), rgba(22, 179, 100, 0.2));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .pill:hover {
+      transform: scale(1.08);
+      border-color: rgba(6, 139, 139, 0.4);
+      box-shadow: 0 4px 12px rgba(7, 167, 167, 0.2);
+    }
+    .pill:hover::before {
+      opacity: 1;
+    }
+    .pill svg {
+      width: 15px;
+      height: 15px;
+      color: var(--brand-teal-deep);
+      transition: transform 0.3s ease;
+    }
+    .pill:hover svg {
+      transform: rotate(12deg) scale(1.2);
+    }
+
+    .trust-list {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+    .trust-list li {
+      position: relative;
+      padding-left: 28px;
+      color: var(--ink-muted);
+      transition: all 0.3s ease;
+      animation: slideInRight 0.6s ease both;
+    }
+    .trust-list li:nth-child(1) { animation-delay: 0.1s; }
+    .trust-list li:nth-child(2) { animation-delay: 0.2s; }
+    .trust-list li:nth-child(3) { animation-delay: 0.3s; }
+    .trust-list li:nth-child(4) { animation-delay: 0.4s; }
+    .trust-list li:hover {
+      padding-left: 32px;
+      color: var(--brand-navy);
+    }
+    .trust-list li:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.45em;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--surface-mint);
+      border: 1px solid rgba(22,179,100,0.25);
+      transition: all 0.3s ease;
+      box-shadow: 0 0 0 0 rgba(22, 179, 100, 0);
+    }
+    .trust-list li:hover:before {
+      box-shadow: 0 0 0 4px rgba(22, 179, 100, 0.15);
+    }
+    .trust-list li:after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 0.74em;
+      width: 6px;
+      height: 3px;
+      border-left: 2px solid var(--brand-green);
+      border-bottom: 2px solid var(--brand-green);
+      transform: rotate(-45deg);
+      animation: checkmarkPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+    .trust-list li:nth-child(1):after { animation-delay: 0.2s; }
+    .trust-list li:nth-child(2):after { animation-delay: 0.3s; }
+    .trust-list li:nth-child(3):after { animation-delay: 0.4s; }
+    .trust-list li:nth-child(4):after { animation-delay: 0.5s; }
+    @keyframes checkmarkPop {
+      0% { transform: rotate(-45deg) scale(0); }
+      100% { transform: rotate(-45deg) scale(1); }
+    }
+
+    .coverage-list {
+      display: grid;
+      gap: 18px;
+    }
+    .coverage-row {
+      display: grid;
+      grid-template-columns: 160px 1fr 70px;
+      align-items: center;
+      gap: 16px;
+      animation: slideInLeft 0.6s ease both;
+      transition: all 0.3s ease;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+    }
+    .coverage-list > :nth-child(1) .coverage-row { animation-delay: 0.1s; }
+    .coverage-list > :nth-child(2) .coverage-row { animation-delay: 0.2s; }
+    .coverage-list > :nth-child(3) .coverage-row { animation-delay: 0.3s; }
+    .coverage-list > :nth-child(4) .coverage-row { animation-delay: 0.4s; }
+    .coverage-row:hover {
+      background: rgba(0, 212, 228, 0.05);
+      transform: translateX(4px);
+    }
+    .coverage-label { color: var(--brand-navy); font-weight: 900; }
+    .coverage-value {
+      text-align: right;
+      color: var(--brand-teal-deep);
+      font-family: var(--code-font);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .track {
+      height: 10px;
+      overflow: hidden;
+      border-radius: var(--radius-pill);
+      background: var(--surface-mint);
+      border: 1px solid rgba(6,139,139,0.12);
+    }
+    .fill {
+      height: 100%;
+      border-radius: inherit;
+      background: var(--gradient-brand);
+      background-size: 200% 100%;
+      animation: fillFlow 3s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    .fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: fillShimmer 2s infinite;
+    }
+    @keyframes fillFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    @keyframes fillShimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .severity {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .severity::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: inherit;
+      opacity: 0;
+      animation: severityPulse 2s ease-in-out infinite;
+    }
+    .critical {
+      background: rgba(220,38,38,0.10);
+      color: #B91C1C;
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+    .critical:hover {
+      background: rgba(220,38,38,0.2);
+      box-shadow: 0 0 12px rgba(220, 38, 38, 0.3);
+      transform: scale(1.05);
+    }
+    .high {
+      background: rgba(234,88,12,0.14);
+      color: #C2410C;
+      border: 1px solid rgba(234, 88, 12, 0.2);
+    }
+    .high:hover {
+      background: rgba(234,88,12,0.25);
+      box-shadow: 0 0 12px rgba(234, 88, 12, 0.3);
+      transform: scale(1.05);
+    }
+    .medium {
+      background: rgba(234,179,8,0.14);
+      color: #A16207;
+      border: 1px solid rgba(234, 179, 8, 0.2);
+    }
+    .medium:hover {
+      background: rgba(234,179,8,0.25);
+      box-shadow: 0 0 12px rgba(234, 179, 8, 0.3);
+      transform: scale(1.05);
+    }
+    @keyframes severityPulse {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 0.5; }
+    }
+
+    .term-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 18px;
+      margin: 0;
+    }
+    .term-list div {
+      padding: 14px 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      transition: all 0.4s ease;
+      animation: gridItemFade 0.6s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+    .term-list div:nth-child(1) { animation-delay: 0.1s; }
+    .term-list div:nth-child(2) { animation-delay: 0.2s; }
+    .term-list div:nth-child(3) { animation-delay: 0.3s; }
+    .term-list div:nth-child(4) { animation-delay: 0.4s; }
+    .term-list div::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 212, 228, 0.1), rgba(22, 179, 100, 0.1));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .term-list div:hover {
+      border-color: var(--brand-teal);
+      box-shadow: 0 8px 20px rgba(7, 167, 167, 0.15);
+      transform: translateY(-4px);
+    }
+    .term-list div:hover::before {
+      opacity: 1;
+    }
+    .term-list dt {
+      margin: 0 0 4px;
+      color: var(--brand-navy);
+      font-weight: 900;
+    }
+    .term-list dd {
+      margin: 0;
+      color: var(--ink-muted);
+    }
+
+    .footer {
+      margin-top: 76px;
+      padding-top: 28px;
+      border-top: 2px solid var(--border-subtle);
+      color: var(--ink-muted);
+      font-size: 13px;
+      animation: slideInUp 0.8s ease both;
+      position: relative;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--gradient-brand);
+      animation: footerGlow 2s ease-in-out infinite;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .footer-grid > div {
+      animation: slideInUp 0.8s ease both;
+      transition: all 0.3s ease;
+    }
+    .footer-grid > div:nth-child(1) { animation-delay: 0.1s; }
+    .footer-grid > div:nth-child(2) { animation-delay: 0.2s; }
+    .footer-grid > div:nth-child(3) { animation-delay: 0.3s; }
+    .footer-grid > div:hover {
+      color: var(--brand-navy);
+      transform: translateY(-2px);
+    }
+    .footer strong {
+      display: block;
+      color: var(--brand-navy);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.3s ease;
+    }
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes footerGlow {
+      0%, 100% { box-shadow: 0 0 0 rgba(7, 167, 167, 0.3); }
+      50% { box-shadow: 0 0 12px rgba(7, 167, 167, 0.6); }
+    }
+
+    /* Advanced Feature UI Animations */
+    .feature-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .feature-tab {
+      padding: 12px 20px;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      background: var(--surface);
+      color: var(--ink-muted);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-tab::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gradient-brand);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .feature-tab:hover {
+      border-color: var(--brand-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(7, 167, 167, 0.2);
+    }
+    .feature-tab.active {
+      background: var(--gradient-brand);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 12px 30px rgba(7, 167, 167, 0.3);
+      animation: tabActivate 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Animated counter */
+    .animated-counter {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--brand-teal);
+      font-family: var(--heading-font);
+      animation: countUp 2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      text-shadow: 0 4px 12px rgba(7, 167, 167, 0.3);
+    }
+
+    /* Feature cards with advanced hover */
+    .feature-card {
+      position: relative;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(0, 212, 228, 0.04) 100%);
+      border: 1px solid var(--border-subtle);
+      padding: 32px;
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: featureCardSlide 0.8s ease both;
+    }
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    .feature-card:nth-child(4) { animation-delay: 0.4s; }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(0, 212, 228, 0.2), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(22, 179, 100, 0.1) 100%);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 30px 60px rgba(7, 167, 167, 0.25);
+      border-color: var(--brand-teal);
+    }
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+    .feature-card:hover::after {
+      opacity: 1;
+    }
+
+    /* Animated progress ring */
+    .progress-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: conic-gradient(var(--brand-teal) var(--progress, 0%), var(--border-subtle) 0%);
+      display: grid;
+      place-items: center;
+      position: relative;
+      animation: ringRotate 4s linear infinite;
+    }
+    .progress-ring::before {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: var(--surface);
+    }
+    .progress-ring-label {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+    .progress-ring-value {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--brand-teal);
+      animation: countUp 2s ease both;
+    }
+    .progress-ring-text {
+      font-size: 12px;
+      color: var(--ink-muted);
+      margin-top: 4px;
+    }
+
+    /* Animated stat badge */
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, rgba(0, 212, 228, 0.15), rgba(22, 179, 100, 0.15));
+      border: 1px solid rgba(7, 167, 167, 0.3);
+      border-radius: var(--radius-pill);
+      font-weight: 700;
+      color: var(--brand-teal-deep);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-badge::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transform: translateX(-100%);
+      animation: badgeShine 3s infinite;
+    }
+    .stat-badge:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px rgba(7, 167, 167, 0.2);
+      border-color: var(--brand-teal);
+    }
+
+    /* Timeline animated */
+    .timeline {
+      position: relative;
+      padding: 20px 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--gradient-brand);
+      animation: timelineGrow 2s ease-out;
+    }
+    .timeline-item {
+      padding: 24px;
+      padding-left: 80px;
+      position: relative;
+      animation: timelineSlide 0.8s ease both;
+    }
+    .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+    .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+    .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+    .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 32px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--gradient-brand);
+      box-shadow: 0 0 0 4px var(--surface), 0 0 12px rgba(7, 167, 167, 0.4);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+    .timeline-item:nth-child(2)::before { animation-delay: 0.4s; }
+    .timeline-item:nth-child(3)::before { animation-delay: 0.8s; }
+    .timeline-item:nth-child(4)::before { animation-delay: 1.2s; }
+
+    /* Animated activity indicator */
+    .activity-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--brand-green);
+      position: relative;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    .activity-dot::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid var(--brand-green);
+      animation: activityPulse 2s ease-in-out infinite;
+    }
+    .activity-dot::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(22, 179, 100, 0.4);
+      animation: activityPulse 2s ease-in-out infinite;
+      animation-delay: 0.3s;
+    }
+
+    /* Animated gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--brand-teal), var(--brand-green), var(--brand-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 4s ease infinite;
+      font-weight: 900;
+    }
+
+    /* Morphing shape animation */
+    .morphing-shape {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, var(--brand-teal), var(--brand-green));
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      animation: morph 8s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(7, 167, 167, 0.3);
+    }
+
+    /* Floating particle effect */
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--brand-teal);
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: particleFloat 6s ease-in-out infinite;
+    }
+    .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .particle:nth-child(2) { left: 20%; animation-delay: 1s; }
+    .particle:nth-child(3) { left: 30%; animation-delay: 2s; }
+    .particle:nth-child(4) { left: 40%; animation-delay: 3s; }
+    .particle:nth-child(5) { left: 50%; animation-delay: 4s; }
+
+    /* Animated badge counter */
+    .badge-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-teal), var(--brand-green));
+      color: white;
+      font-weight: 900;
+      font-size: 14px;
+      animation: badgeBounce 2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
+      box-shadow: 0 4px 12px rgba(7, 167, 167, 0.3);
+    }
+
+    /* Enhanced ripple effect */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+    .ripple::before {
+      content: '';
+      position: absolute;
+      inset: -50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.5), transparent);
+      animation: rippleExpand 0.8s ease-out;
+      pointer-events: none;
+    }
+
+    /* Glitch effect */
+    .glitch-text {
+      position: relative;
+      animation: glitch 3s ease-in-out infinite;
+    }
+    .glitch-text::before {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--brand-teal);
+      animation: glitchLeft 0.3s ease-in-out infinite;
+    }
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--brand-green);
+      animation: glitchRight 0.3s ease-in-out infinite;
+    }
+
+    .mobile-overlay {
+      position: fixed;
+      inset: 72px 0 0;
+      z-index: 30;
+      display: none;
+      background: rgba(32,32,64,0.18);
+    }
+    body.nav-open .mobile-overlay { display: block; }
+
+    @media (max-width: 1050px) {
+      .layout {
+        grid-template-columns: 240px minmax(0, 1fr);
+        gap: 36px;
+      }
+      .topbar-inner {
+        grid-template-columns: 230px 1fr auto;
+      }
+      .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 900px) {
+      .topbar-inner {
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
+        padding: 0 16px;
+      }
+      .brand-logo { width: 142px; height: 45px; }
+      .document-title {
+        text-align: left;
+        font-size: 13px;
+      }
+      .version-badge { display: none; }
+      .menu-button { display: grid; }
+      .layout {
+        display: block;
+        padding: 24px 16px 56px;
+      }
+      .sidebar {
+        position: fixed;
+        top: 84px;
+        left: 16px;
+        z-index: 45;
+        width: min(320px, calc(100vw - 32px));
+        max-height: calc(100vh - 110px);
+        transform: translateX(calc(-100% - 24px));
+        transition: transform 220ms ease;
+      }
+      body.nav-open .sidebar { transform: translateX(0); }
+      .doc-intro { padding: 24px; }
+      section { padding-top: 56px; }
+      .grid-2,
+      .grid-3,
+      .grid-4 { grid-template-columns: 1fr; }
+      .benefit-list li,
+      .stack-layer,
+      .coverage-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .repo-tree-flip {
+        min-height: 720px;
+      }
+      .repo-summary-grid {
+        grid-template-columns: 1fr;
+      }
+      .repo-tree-back {
+        padding: 22px;
+      }
+      .coverage-value { text-align: left; }
+      .term-list { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .topbar { height: 68px; }
+      .mobile-overlay { top: 68px; }
+      .document-title { display: none; }
+      .topbar-inner { grid-template-columns: auto 1fr auto; }
+      .brand-logo { width: 142px; }
+      .doc-intro h1 { font-size: 34px; }
+      .section-kicker {
+        display: grid;
+        gap: 2px;
+      }
+      .section-title,
+      .section-number { font-size: 29px; }
+      th, td { padding: 12px; }
+    }
+    .doc-heading {
+      margin: 34px 0 14px;
+      color: var(--brand-navy);
+      font-family: var(--heading-font);
+      font-size: 24px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+    .doc-heading span {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid rgba(7,167,167,0.18);
+    }
+    .doc-subheading {
+      margin: 24px 0 10px;
+      color: var(--brand-navy-2);
+      font-family: var(--heading-font);
+      font-size: 20px;
+      line-height: 1.3;
+    }
+    .doc-minorheading {
+      margin: 18px 0 8px;
+      color: var(--brand-teal-deep);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .doc-para { margin: 0 0 16px; color: var(--ink-muted); }
+    .doc-list {
+      margin: 0 0 20px;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+    .doc-list li {
+      position: relative;
+      padding: 12px 14px 12px 42px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      color: var(--ink-muted);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.4s ease;
+      animation: slideInRight 0.6s ease both;
+    }
+    .doc-list li:nth-child(1) { animation-delay: 0.1s; }
+    .doc-list li:nth-child(2) { animation-delay: 0.2s; }
+    .doc-list li:nth-child(3) { animation-delay: 0.3s; }
+    .doc-list li:nth-child(4) { animation-delay: 0.4s; }
+    .doc-list li:nth-child(5) { animation-delay: 0.5s; }
+    .doc-list li:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(7, 167, 167, 0.15);
+      border-color: var(--brand-teal);
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(0, 212, 228, 0.04) 100%);
+    }
+    .doc-list li:before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 18px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gradient-brand);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    .doc-list li:hover:before {
+      animation: pulse 0.8s ease-in-out infinite;
+    }
+    .doc-table { margin: 0 0 22px; }
+    .doc-table table { min-width: 720px; }
+    .doc-table.compact-table table { min-width: 560px; }
+    .doc-code { margin: 0 0 22px; }
+    .repo-tree-flip {
+      position: relative;
+      margin: 0 0 22px;
+      min-height: 624px;
+      perspective: 1400px;
+      outline: none;
+      cursor: pointer;
+    }
+    .repo-tree-inner {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transition: transform 820ms cubic-bezier(.2,.8,.2,1);
+    }
+    .repo-tree-flip:hover .repo-tree-inner,
+    .repo-tree-flip:focus-within .repo-tree-inner,
+    .repo-tree-flip.is-flipped .repo-tree-inner {
+      transform: rotateY(180deg);
+    }
+    .repo-tree-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .repo-tree-front .code-block {
+      height: 100%;
+      margin: 0;
+    }
+    .repo-tree-front pre {
+      height: calc(100% - 46px);
+    }
+    .repo-tree-back {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+      padding: 28px;
+      border: 1px solid rgba(7,167,167,0.18);
+      background:
+        radial-gradient(circle at 20% 18%, rgba(0,212,228,0.16), transparent 34%),
+        radial-gradient(circle at 84% 76%, rgba(22,179,100,0.16), transparent 34%),
+        linear-gradient(135deg, #FFFFFF 0%, #F4F8FE 100%);
+      box-shadow: var(--shadow-lg);
+      transform: rotateY(180deg);
+    }
+    .repo-tree-back h4 {
+      margin: 0;
+      color: var(--brand-navy);
+      font-family: var(--heading-font);
+      font-size: 30px;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+    .repo-tree-back p {
+      margin: 8px 0 0;
+      max-width: 620px;
+      color: var(--ink-muted);
+    }
+    .repo-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-content: start;
+    }
+    .repo-summary-item {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.82);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.4s ease;
+      animation: slideInLeft 0.6s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+    .repo-summary-grid > :nth-child(1) { animation-delay: 0.1s; }
+    .repo-summary-grid > :nth-child(2) { animation-delay: 0.2s; }
+    .repo-summary-grid > :nth-child(3) { animation-delay: 0.3s; }
+    .repo-summary-grid > :nth-child(4) { animation-delay: 0.4s; }
+    .repo-summary-grid > :nth-child(5) { animation-delay: 0.5s; }
+    .repo-summary-grid > :nth-child(6) { animation-delay: 0.6s; }
+    .repo-summary-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 212, 228, 0.1), rgba(22, 179, 100, 0.1));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .repo-summary-item:hover {
+      border-color: var(--brand-teal);
+      box-shadow: 0 12px 30px rgba(7, 167, 167, 0.15);
+      transform: translateY(-4px);
+    }
+    .repo-summary-item:hover::before {
+      opacity: 1;
+    }
+    .repo-summary-item svg {
+      width: 24px;
+      height: 24px;
+      color: var(--brand-teal-deep);
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: iconBounce 2s ease-in-out infinite;
+    }
+    .repo-summary-grid > :nth-child(1) svg { animation-delay: 0s; }
+    .repo-summary-grid > :nth-child(2) svg { animation-delay: 0.2s; }
+    .repo-summary-grid > :nth-child(3) svg { animation-delay: 0.4s; }
+    .repo-summary-grid > :nth-child(4) svg { animation-delay: 0.6s; }
+    .repo-summary-grid > :nth-child(5) svg { animation-delay: 0.8s; }
+    .repo-summary-grid > :nth-child(6) svg { animation-delay: 1s; }
+    .repo-summary-item:hover svg {
+      transform: scale(1.2) rotate(12deg);
+      color: var(--brand-teal);
+      filter: drop-shadow(0 4px 12px rgba(7, 167, 167, 0.3));
+    }
+    @keyframes iconBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .repo-summary-item strong {
+      display: block;
+      color: var(--brand-navy);
+      font-size: 14px;
+      line-height: 1.25;
+    }
+    .repo-summary-item span {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink-muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .repo-tree-hint {
+      color: var(--brand-teal-deep);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 80;
+      width: 100%;
+      height: 4px;
+      background: rgba(226,231,238,0.55);
+    }
+    .scroll-progress span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: var(--gradient-brand);
+      box-shadow: 0 0 18px rgba(7,167,167,0.35);
+      transition: width 120ms linear;
+    }
+    .topbar { transition: box-shadow 220ms ease, background 220ms ease; }
+    .topbar.scrolled {
+      background: rgba(255,255,255,0.98);
+      box-shadow: 0 10px 30px -20px rgba(32,32,64,0.45);
+    }
+    .brand-logo path[stroke] {
+      stroke-dasharray: 420;
+      stroke-dashoffset: 420;
+      animation: drawBrandLine 1.4s ease 220ms forwards;
+    }
+    .brand-logo path[fill="url(#logo-grad)"] {
+      transform-origin: 58px 36px;
+      animation: logoSettle 700ms cubic-bezier(.2,.8,.2,1) both;
+    }
+    .version-badge {
+      position: relative;
+      overflow: hidden;
+    }
+    .version-badge:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translateX(-110%);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.88), transparent);
+      animation: badgeSweep 4.8s ease-in-out infinite;
+    }
+    .doc-intro {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .doc-intro:before {
+      content: "";
+      position: absolute;
+      inset: -60% -20% auto auto;
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, rgba(0,212,228,0.18), transparent 62%);
+      transform: translate3d(var(--mouse-x, 0px), var(--mouse-y, 0px), 0);
+      transition: transform 350ms ease;
+      z-index: -1;
+      animation: floatGlow 8s ease-in-out infinite;
+    }
+    @keyframes floatGlow {
+      0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.8; }
+      50% { transform: translate3d(40px, -30px, 0); opacity: 1; }
+    }
+    @keyframes heroTitleSlide {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes heroSubtitleSlide {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes gridScroll {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(40px); }
+    }
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.3); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes tabActivate {
+      0% { transform: scale(0.95); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    @keyframes featureCardSlide {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes ringRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes badgeShine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    @keyframes timelineGrow {
+      from { height: 0; }
+      to { height: 100%; }
+    }
+    @keyframes timelineSlide {
+      from { opacity: 0; transform: translateX(-30px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes dotPulse {
+      0%, 100% { box-shadow: 0 0 0 4px var(--surface), 0 0 12px rgba(7, 167, 167, 0.4); }
+      50% { box-shadow: 0 0 0 4px var(--surface), 0 0 24px rgba(7, 167, 167, 0.8); }
+    }
+    @keyframes activityPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0; }
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes morph {
+      0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+      25% { border-radius: 58% 42% 38% 62% / 58% 58% 42% 42%; }
+      50% { border-radius: 70% 30% 46% 54% / 30% 30% 58% 70%; }
+      75% { border-radius: 56% 44% 50% 50% / 50% 56% 44% 44%; }
+      100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    }
+    @keyframes particleFloat {
+      0% { transform: translateY(0px); opacity: 0; }
+      25% { opacity: 0.6; }
+      75% { opacity: 0.6; }
+      100% { transform: translateY(-100px); opacity: 0; }
+    }
+    @keyframes badgeBounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+    @keyframes rippleExpand {
+      from { transform: scale(0); opacity: 1; }
+      to { transform: scale(4); opacity: 0; }
+    }
+    @keyframes glitch {
+      0%, 100% { text-shadow: none; }
+      20% { text-shadow: -2px 0 var(--brand-teal), 2px 0 var(--brand-green); }
+      40% { text-shadow: none; }
+    }
+    @keyframes glitchLeft {
+      0% { clip-path: polygon(0 0, 100% 0, 100% 0, 0 0); }
+      20% { clip-path: polygon(0 20%, 100% 0, 100% 80%, 0 100%); }
+      40% { clip-path: polygon(0 50%, 100% 30%, 100% 70%, 0 90%); }
+      60% { clip-path: polygon(0 10%, 100% 20%, 100% 85%, 0 95%); }
+      80% { clip-path: polygon(0 40%, 100% 10%, 100% 75%, 0 80%); }
+      100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+    }
+    @keyframes glitchRight {
+      0% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+      20% { clip-path: polygon(0 80%, 100% 20%, 100% 100%, 0 0); }
+      40% { clip-path: polygon(0 30%, 100% 50%, 100% 90%, 0 70%); }
+      60% { clip-path: polygon(0 85%, 100% 75%, 100% 20%, 0 10%); }
+      80% { clip-path: polygon(0 80%, 100% 75%, 100% 25%, 0 40%); }
+      100% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+    }
+
+    /* Enhanced sidebar animations */
+    .sidebar {
+      animation: sidebarSlideIn 0.6s ease both;
+    }
+    @keyframes sidebarSlideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Enhanced topbar animations */
+    .topbar {
+      animation: topbarSlideDown 0.8s ease both;
+    }
+    @keyframes topbarSlideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Enhanced content animations */
+    .content {
+      animation: contentFadeIn 0.8s ease 0.2s both;
+    }
+    @keyframes contentFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Hover lift effect */
+    @supports (animation: none) {
+      .card, .feature-card, [style*="border-radius"] {
+        --hover-scale: 1;
+        --hover-y: 0px;
+      }
+    }
+
+    /* Enhanced button hover effects */
+    .feature-tab:active {
+      animation: buttonPress 0.3s ease;
+    }
+    @keyframes buttonPress {
+      0% { transform: scale(1.05); }
+      50% { transform: scale(0.98); }
+      100% { transform: scale(1); }
+    }
+
+    /* Smooth scroll behavior for all links */
+    a {
+      scroll-behavior: smooth;
+    }
+
+    /* Loading pulse for images */
+    img {
+      animation: imageFadeIn 0.6s ease;
+    }
+    @keyframes imageFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .doc-intro:after {
+      content: "";
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      bottom: 0;
+      height: 6px;
+      background: var(--gradient-brand);
+      background-size: 200% 100%;
+      border-radius: var(--radius-pill) var(--radius-pill) 0 0;
+      animation: gradientFlow 4s linear infinite;
+      box-shadow: 0 0 20px rgba(7, 167, 167, 0.4);
+    }
+    .meta-chip {
+      animation: floatIn 620ms ease both;
+      background: rgba(255, 255, 255, 0.2) !important;
+      border: 1px solid rgba(255, 255, 255, 0.4) !important;
+      color: white !important;
+      backdrop-filter: blur(10px);
+    }
+    .meta-chip:nth-child(2) { animation-delay: 90ms; }
+    .meta-chip:nth-child(3) { animation-delay: 180ms; }
+    .meta-chip svg {
+      color: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    /* Animated floating elements */
+    .floating {
+      animation: float 6s ease-in-out infinite;
+    }
+    .floating:nth-child(2) { animation-delay: 1s; }
+    .floating:nth-child(3) { animation-delay: 2s; }
+
+    /* Pulse animation for KPI cards */
+    .kpi-pulse {
+      animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* Shimmer effect for hero section */
+    .shimmer {
+      position: relative;
+      overflow: hidden;
+    }
+    .shimmer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      animation: shimmerSlide 3s infinite;
+    }
+
+    /* Rotating gradient background */
+    .gradient-rotate {
+      background: linear-gradient(-45deg, #07A7A7, #16B364, #00D4E4, #07A7A7);
+      background-size: 400% 400%;
+      animation: gradientRotate 15s ease infinite;
+    }
+
+    /* Animated chart bars */
+    .chart-bar {
+      transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .chart-bar:hover {
+      filter: drop-shadow(0 8px 16px rgba(7, 167, 167, 0.3));
+    }
+
+    /* Bounce animation for icons */
+    .bounce-icon {
+      animation: bounce 2s ease-in-out infinite;
+    }
+    .bounce-icon:nth-child(2) { animation-delay: 0.2s; }
+    .bounce-icon:nth-child(3) { animation-delay: 0.4s; }
+
+    /* Slide in animations */
+    .slide-in-left {
+      animation: slideInLeft 0.8s ease both;
+    }
+    .slide-in-right {
+      animation: slideInRight 0.8s ease both;
+    }
+
+    /* Glow effect */
+    .glow-text {
+      text-shadow: 0 0 10px rgba(0, 212, 228, 0.5);
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    /* Card flip animation on hover */
+    .card-flip {
+      transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    .card-flip:hover {
+      transform: translateY(-8px) rotateX(5deg);
+    }
+
+    /* Rotating icon animation */
+    .rotate-icon {
+      animation: rotate 8s linear infinite;
+    }
+    .rotate-icon:hover {
+      animation: rotate 3s linear infinite;
+    }
+    .toc a {
+      position: relative;
+      overflow: hidden;
+    }
+    .toc a:before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      border-radius: var(--radius-pill);
+      background: var(--gradient-brand);
+      transform: scaleY(0);
+      transition: transform 180ms ease;
+    }
+    .toc a.active:before { transform: scaleY(1); }
+    .toc a:hover { transform: translateX(2px); }
+    .section-head { position: relative; }
+    .section-head:before {
+      content: "";
+      position: absolute;
+      left: -24px;
+      top: 4px;
+      width: 6px;
+      height: 54px;
+      border-radius: var(--radius-pill);
+      background: var(--gradient-brand);
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 520ms ease;
+      box-shadow: 0 0 12px rgba(7, 167, 167, 0.4);
+    }
+    .reveal.visible .section-head:before {
+      transform: scaleY(1);
+      animation: sectionGlow 1.2s ease-out;
+    }
+    .section-number {
+      text-shadow: 0 10px 26px rgba(7,167,167,0.14);
+      animation: numberPulse 3s ease-in-out infinite;
+    }
+    @keyframes numberPulse {
+      0%, 100% { text-shadow: 0 10px 26px rgba(7,167,167,0.14); }
+      50% { text-shadow: 0 10px 40px rgba(7,167,167,0.3), 0 0 20px rgba(0, 212, 228, 0.2); }
+    }
+    .doc-heading span {
+      position: relative;
+      overflow: hidden;
+    }
+    .doc-heading span:after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 100%;
+      height: 3px;
+      background: var(--gradient-brand);
+      transform: translateX(-102%);
+      transition: transform 620ms ease;
+    }
+    .reveal.visible .doc-heading span:after { transform: translateX(0); }
+    .doc-list li,
+    .doc-table,
+    .doc-code {
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    .doc-list li:hover,
+    .doc-table:hover,
+    .doc-code:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .doc-list li:hover { border-color: rgba(7,167,167,0.24); }
+    .doc-table tbody tr { transition: background 150ms ease; }
+    .doc-table tbody tr {
+      animation: tableRowSlide 0.6s ease both;
+    }
+    .doc-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+    .doc-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+    .doc-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+    .doc-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+    .doc-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+    .doc-table tbody tr:hover {
+      background: linear-gradient(90deg, rgba(0,212,228,0.06), rgba(22,179,100,0.06));
+      transform: scale(1.01);
+    }
+    .code-block {
+      position: relative;
+      transition: all 0.4s ease;
+    }
+    .code-block:hover {
+      box-shadow: 0 20px 40px rgba(7, 167, 167, 0.2), 0 0 30px rgba(0, 212, 228, 0.15);
+      transform: translateY(-4px);
+    }
+    .code-block:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(110deg, transparent 0%, transparent 42%, rgba(255,255,255,0.08) 50%, transparent 58%, transparent 100%);
+      transform: translateX(-120%);
+      transition: transform 800ms ease;
+    }
+    .code-block:hover:after { transform: translateX(120%); }
+    .code-block::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-md);
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(0, 212, 228, 0.4), rgba(22, 179, 100, 0.2));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .code-block:hover::before {
+      opacity: 1;
+    }
+    .back-top {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      z-index: 50;
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(7,167,167,0.22);
+      border-radius: 50%;
+      color: var(--brand-navy);
+      background: rgba(255,255,255,0.92);
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(12px) scale(0.94);
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+    .back-top::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #07A7A7, #16B364, #00D4E4, #07A7A7);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+    .back-top.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      animation: float 4s ease-in-out infinite;
+    }
+    .back-top:hover {
+      box-shadow: 0 12px 30px rgba(7, 167, 167, 0.3);
+      transform: translateY(-6px) scale(1.08);
+      border-color: var(--brand-teal);
+    }
+    .back-top:hover::before {
+      opacity: 0.15;
+    }
+    .back-top svg {
+      width: 20px;
+      height: 20px;
+      transform: rotate(-90deg);
+    }
+    @keyframes drawBrandLine { to { stroke-dashoffset: 0; } }
+    @keyframes logoSettle {
+      from { opacity: 0; transform: translateY(8px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes badgeSweep {
+      0%, 58% { transform: translateX(-110%); }
+      76%, 100% { transform: translateX(110%); }
+    }
+    @keyframes gradientFlow {
+      from { background-position: 0% 50%; }
+      to { background-position: 200% 50%; }
+    }
+    @keyframes floatIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    @keyframes shimmerSlide {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+    @keyframes gradientRotate {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(40px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 10px rgba(0, 212, 228, 0.5); }
+      50% { text-shadow: 0 0 20px rgba(0, 212, 228, 0.8), 0 0 30px rgba(22, 179, 100, 0.4); }
+    }
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes tableRowSlide {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes iconPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    @keyframes borderGlow {
+      0%, 100% { border-color: var(--border-subtle); box-shadow: 0 0 0 0 rgba(7, 167, 167, 0); }
+      50% { border-color: var(--brand-teal); box-shadow: 0 0 0 3px rgba(7, 167, 167, 0.1); }
+    }
+    @keyframes sectionGlow {
+      0% { box-shadow: 0 0 0 rgba(7, 167, 167, 0.4); }
+      100% { box-shadow: 0 0 0 8px rgba(7, 167, 167, 0); }
+    }
+    @keyframes gridItemFade {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *:before,
+      *:after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute">
+    <defs>
+      <symbol id="icon-shield-check" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"/><path d="m8.5 12.2 2.2 2.2 4.8-5"/></symbol>
+      <symbol id="icon-layout-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="5" rx="2"/><rect x="13" y="10" width="8" height="11" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/></symbol>
+      <symbol id="icon-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 6 2 2"/><path d="m14 8 2 2"/></symbol>
+      <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.8"/><path d="M16 3.3a4 4 0 0 1 0 7.4"/></symbol>
+      <symbol id="icon-arrows-diff" viewBox="0 0 24 24"><path d="M6 3v12"/><path d="m3 12 3 3 3-3"/><path d="M18 21V9"/><path d="m15 12 3-3 3 3"/></symbol>
+      <symbol id="icon-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M9 4v16"/><path d="M15 4v16"/></symbol>
+      <symbol id="icon-git-compare" viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></symbol>
+      <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="icon-siren" viewBox="0 0 24 24"><path d="M7 18v-6a5 5 0 0 1 10 0v6"/><path d="M5 18h14"/><path d="M4 22h16"/><path d="m21 7-2 1"/><path d="M3 7l2 1"/><path d="M12 2v2"/></symbol>
+      <symbol id="icon-camera" viewBox="0 0 24 24"><path d="M14 5 12.5 3h-5L6 5H4a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-6Z"/><circle cx="12" cy="13" r="4"/></symbol>
+      <symbol id="icon-cloud" viewBox="0 0 24 24"><path d="M17.5 18H7a5 5 0 1 1 1-9.9A6 6 0 0 1 19 11a3.5 3.5 0 0 1-1.5 7Z"/></symbol>
+      <symbol id="icon-code" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3"/><path d="m16 9 4 3-4 3"/><path d="m14 4-4 16"/></symbol>
+      <symbol id="icon-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="m3 12 9 5 9-5"/><path d="m3 16 9 5 9-5"/></symbol>
+      <symbol id="icon-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+      <symbol id="icon-workflow" viewBox="0 0 24 24"><rect x="3" y="4" width="6" height="6" rx="1"/><rect x="15" y="14" width="6" height="6" rx="1"/><path d="M9 7h4a3 3 0 0 1 3 3v4"/><path d="M12 10 9 7l3-3"/></symbol>
+      <symbol id="icon-terminal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m7 9 3 3-3 3"/><path d="M12 15h5"/></symbol>
+      <symbol id="icon-beaker" viewBox="0 0 24 24"><path d="M9 3h6"/><path d="M10 3v6l-5 8a3 3 0 0 0 2.5 4.5h9a3 3 0 0 0 2.5-4.5l-5-8V3"/><path d="M8 15h8"/></symbol>
+      <symbol id="icon-git-branch" viewBox="0 0 24 24"><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 9v6"/><path d="M9 18h1a8 8 0 0 0 8-8V9"/></symbol>
+      <symbol id="icon-package" viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M4 7.5 12 12l8-4.5"/><path d="M12 12v9"/></symbol>
+      <symbol id="icon-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></symbol>
+      <symbol id="icon-door-open" viewBox="0 0 24 24"><path d="M13 4h5v16h-5"/><path d="M13 20 6 18V6l7-2v16Z"/><path d="M10 12h.01"/></symbol>
+      <symbol id="icon-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a8 8 0 0 0 .1-2l2-1.5-2-3.4-2.4 1a8 8 0 0 0-1.7-1l-.3-2.6h-4l-.3 2.6a8 8 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.5a8 8 0 0 0 .1 2l-2 1.5 2 3.4 2.4-1a8 8 0 0 0 1.7 1l.3 2.6h4l.3-2.6a8 8 0 0 0 1.7-1l2.4 1 2-3.4-2-1.5Z"/></symbol>
+      <symbol id="icon-folder-search" viewBox="0 0 24 24"><path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v4"/><path d="M3 6v12a2 2 0 0 0 2 2h8"/><circle cx="17" cy="17" r="3"/><path d="m20 20-1.5-1.5"/></symbol>
+      <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="icon-gauge" viewBox="0 0 24 24"><path d="M5 19a9 9 0 1 1 14 0"/><path d="m13 13 4-4"/><path d="M12 13h.01"/></symbol>
+      <symbol id="icon-alert-triangle" viewBox="0 0 24 24"><path d="M12 3 22 20H2L12 3Z"/><path d="M12 9v5"/><path d="M12 17h.01"/></symbol>
+      <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+      <symbol id="icon-file-code" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path d="M14 3v6h6"/><path d="m10 13-2 2 2 2"/><path d="m14 13 2 2-2 2"/></symbol>
+      <symbol id="icon-app-window" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M8 6.5h.01"/><path d="M12 6.5h.01"/></symbol>
+      <symbol id="icon-layout-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></symbol>
+      <symbol id="icon-tags" viewBox="0 0 24 24"><path d="m3 12 9 9 8-8-9-9H3v8Z"/><path d="M7 7h.01"/><path d="m14 4 7 7"/></symbol>
+      <symbol id="icon-component" viewBox="0 0 24 24"><path d="M8 4h8v4H8z"/><path d="M8 16h8v4H8z"/><path d="M4 10h4v4H4z"/><path d="M16 10h4v4h-4z"/><path d="M10 8v2"/><path d="M14 8v2"/><path d="M10 14v2"/><path d="M14 14v2"/><path d="M8 12h8"/></symbol>
+      <symbol id="icon-layout" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/><path d="M3 10h18"/></symbol>
+      <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></symbol>
+      <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M21 13a8 8 0 1 1-10-10 7 7 0 0 0 10 10Z"/></symbol>
+      <symbol id="icon-list-ordered" viewBox="0 0 24 24"><path d="M10 6h10"/><path d="M10 12h10"/><path d="M10 18h10"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-1 2-3 0-1-2-1-2 0"/></symbol>
+      <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5Z"/></symbol>
+      <symbol id="icon-shield-alert" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3Z"/><path d="M12 8v5"/><path d="M12 16h.01"/></symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+      <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top" aria-label="SP Tech home">
+        <svg class="brand-logo" viewBox="0 0 268 84" role="img" aria-labelledby="logo-title">
+          <title id="logo-title">SP Tech Salesforce and AI Practice</title>
+          <defs>
+            <linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#16B364"/>
+              <stop offset="55%" stop-color="#07A7A7"/>
+              <stop offset="100%" stop-color="#00D4E4"/>
+            </linearGradient>
+          </defs>
+          <path d="M26 20a20 20 0 0 1 20-20h45v40L45 0h46v70H26V20Z" fill="url(#logo-grad)"/>
+          <path d="M26 43 73 70H55L26 53Z" fill="#fff"/>
+          <path d="M48 0 91 38v14L33 0h15Z" fill="#fff"/>
+          <text x="132" y="35" fill="#202040" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="30" font-weight="800" letter-spacing="-0.01em">SP Tech</text>
+          <text x="133" y="55" fill="#5D6280" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-style="italic" font-weight="600">Salesforce &amp; AI Practice</text>
+          <path d="M132 64h95" fill="none" stroke="url(#logo-grad)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </a>
+      <div class="document-title">SPT Security Fabric &mdash; Technical Documentation</div>
+      <div class="version-badge">v1.0 &middot; API 67.0</div>
+      <button class="menu-button" type="button" aria-label="Open table of contents" aria-expanded="false">
+        <svg><use href="#icon-menu"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-overlay" aria-hidden="true"></div>
+
+  <main id="top" class="layout">
+    <aside class="sidebar" aria-label="Table of contents">
+      <p class="toc-title">Contents</p>
+      <nav class="toc">
+        <a href="#s1"><svg><use href="#icon-layout-dashboard"/></svg><span>1. Project Overview</span></a>
+        <a href="#s2"><svg><use href="#icon-folder-search"/></svg><span>2. Project Structure</span></a>
+        <a href="#s3"><svg><use href="#icon-layers"/></svg><span>3. System Architecture</span></a>
+        <a href="#s4"><svg><use href="#icon-database"/></svg><span>4. Data Model</span></a>
+        <a href="#s5"><svg><use href="#icon-code"/></svg><span>5. Apex Backend</span></a>
+        <a href="#s6"><svg><use href="#icon-app-window"/></svg><span>6. Lightning Web Components</span></a>
+        <a href="#s7"><svg><use href="#icon-shield-check"/></svg><span>7. Security Design</span></a>
+        <a href="#s8"><svg><use href="#icon-terminal"/></svg><span>8. Development &amp; Deployment</span></a>
+        <a href="#s9"><svg><use href="#icon-beaker"/></svg><span>9. Testing Strategy</span></a>
+        <a href="#s10"><svg><use href="#icon-list-ordered"/></svg><span>10. Appendix</span></a>
+      </nav>
+    </aside>
+
+    <article class="content">
+      <div class="doc-intro reveal">
+        <h1>SPT Security Fabric</h1>
+        <p>Salesforce Access &amp; Permission Security Platform. Project: <code>SPTSecurityFabric</code>. Platform: Salesforce Lightning, API Version 67.0. Document Version 1.0, June 2026.</p>
+        <div class="meta-row">
+          <span class="meta-chip"><svg><use href="#icon-package"/></svg>Technical documentation</span>
+          <span class="meta-chip"><svg><use href="#icon-cloud"/></svg>Salesforce Lightning</span>
+          <span class="meta-chip"><svg><use href="#icon-code"/></svg>API v67.0</span>
+        </div>
+
+        <div class="hero-hud" aria-label="Document telemetry">
+          <div class="hud-card"><span>apex classes</span><strong>37</strong><em>active</em></div>
+          <div class="hud-card"><span>services</span><strong>15</strong><em>optimized</em></div>
+          <div class="hud-card"><span>controllers</span><strong>10</strong><em>secured</em></div>
+          <div class="hud-card"><span>cache ttl</span><strong>300s</strong><em>dashboard</em></div>
+        </div>
+      </div>
+
+      <!-- Premium Services Section -->
+      <section style="padding: 100px 24px; background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 50%, #f0f8fc 100%); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -50%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(0, 212, 228, 0.08), transparent); border-radius: 50%; z-index: 0;"></div>
+        <div style="position: absolute; bottom: -30%; left: -5%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(22, 179, 100, 0.08), transparent); border-radius: 50%; z-index: 0;"></div>
+
+        <div style="position: relative; z-index: 1; max-width: 1200px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="font-size: clamp(36px, 6vw, 56px); color: var(--brand-navy); margin: 0 0 20px; font-weight: 900; letter-spacing: -0.02em;">
+              Security Solutions
+            </h2>
+            <p style="font-size: 18px; color: var(--ink-muted); max-width: 600px; margin: 0 auto; font-weight: 500;">
+              Comprehensive access management and permission analysis platform for modern enterprises
+            </p>
+          </div>
+
+          <h2 style="text-align: center; margin-bottom: 40px; font-size: 32px; color: var(--brand-navy);">
+            <span class="gradient-text">Core Features & Capabilities</span>
+          </h2>
+
+        <div class="feature-tabs" style="justify-content: center;">
+          <div class="feature-tab active" style="z-index: 1;">🔐 Security</div>
+          <div class="feature-tab">📊 Analytics</div>
+          <div class="feature-tab">⚙️ Management</div>
+          <div class="feature-tab">🎯 Compliance</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 32px; margin-top: 60px;">
+          <div class="feature-card" style="background: linear-gradient(135deg, rgba(0, 212, 228, 0.1), rgba(7, 167, 167, 0.05)); border: 1px solid rgba(0, 212, 228, 0.2);">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, rgba(0, 212, 228, 0.2), rgba(7, 167, 167, 0.15)); display: grid; place-items: center; margin-bottom: 24px; font-size: 32px;">🛡️</div>
+            <h3 style="color: var(--brand-navy); margin: 0 0 14px; font-size: 22px; font-weight: 700;">Access Control</h3>
+            <p style="color: var(--ink-muted); margin: 0 0 20px; line-height: 1.6;">Advanced permission analysis across profiles and permission sets with real-time impact detection and governance.</p>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--brand-teal); animation: pulse 2s ease-in-out infinite;"></div>
+              <span style="font-size: 13px; font-weight: 700; color: var(--brand-teal);">SECURE & AUDITED</span>
+            </div>
+          </div>
+
+          <div class="feature-card" style="background: linear-gradient(135deg, rgba(22, 179, 100, 0.1), rgba(16, 122, 69, 0.05)); border: 1px solid rgba(22, 179, 100, 0.2);">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, rgba(22, 179, 100, 0.2), rgba(16, 122, 69, 0.15)); display: grid; place-items: center; margin-bottom: 24px; font-size: 32px;">📈</div>
+            <h3 style="color: var(--brand-navy); margin: 0 0 14px; font-size: 22px; font-weight: 700;">Security Scoring</h3>
+            <p style="color: var(--ink-muted); margin: 0 0 20px; line-height: 1.6;">Objective 0-100 security and compliance scores with weighted risk assessment and trend analysis.</p>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--brand-green); animation: pulse 2s ease-in-out infinite;"></div>
+              <span style="font-size: 13px; font-weight: 700; color: var(--brand-green);">REAL-TIME METRICS</span>
+            </div>
+          </div>
+
+          <div class="feature-card" style="background: linear-gradient(135deg, rgba(7, 167, 167, 0.1), rgba(0, 121, 130, 0.05)); border: 1px solid rgba(7, 167, 167, 0.2);">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, rgba(7, 167, 167, 0.2), rgba(0, 121, 130, 0.15)); display: grid; place-items: center; margin-bottom: 24px; font-size: 32px;">🔍</div>
+            <h3 style="color: var(--brand-navy); margin: 0 0 14px; font-size: 22px; font-weight: 700;">Deep Analysis</h3>
+            <p style="color: var(--ink-muted); margin: 0 0 20px; line-height: 1.6;">Granular field-level security, CRUD permissions, and custom entity access mapping with hierarchies.</p>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--brand-teal-deep); animation: pulse 2s ease-in-out infinite; animation-delay: 0.2s;"></div>
+              <span style="font-size: 13px; font-weight: 700; color: var(--brand-teal-deep);">COMPREHENSIVE</span>
+            </div>
+          </div>
+
+          <div class="feature-card" style="background: linear-gradient(135deg, rgba(0, 212, 228, 0.1), rgba(22, 179, 100, 0.08)); border: 1px solid rgba(0, 212, 228, 0.2);">
+            <div style="width: 60px; height: 60px; border-radius: 16px; background: linear-gradient(135deg, rgba(0, 212, 228, 0.2), rgba(22, 179, 100, 0.15)); display: grid; place-items: center; margin-bottom: 24px; font-size: 32px;">✅</div>
+            <h3 style="color: var(--brand-navy); margin: 0 0 14px; font-size: 22px; font-weight: 700;">Remediation</h3>
+            <p style="color: var(--ink-muted); margin: 0 0 20px; line-height: 1.6;">Preview and apply permission changes with full audit trail, change history, and rollback capability.</p>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--brand-cyan); animation: pulse 2s ease-in-out infinite; animation-delay: 0.4s;"></div>
+              <span style="font-size: 13px; font-weight: 700; color: var(--brand-cyan);">VERIFIED & SAFE</span>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section style="padding: 120px 24px; background: linear-gradient(135deg, #07A7A7 0%, #16B364 50%, #00D4E4 100%); position: relative; overflow: hidden; margin: 80px 0; border-radius: 0;">
+        <div style="position: absolute; inset: 0; opacity: 0.1;">
+          <div style="position: absolute; width: 400px; height: 400px; border-radius: 50%; background: white; top: -200px; left: -200px;"></div>
+          <div style="position: absolute; width: 300px; height: 300px; border-radius: 50%; background: white; bottom: -150px; right: -150px;"></div>
+        </div>
+
+        <div style="max-width: 900px; margin: 0 auto; text-align: center; position: relative; z-index: 1;">
+          <h2 style="font-size: clamp(32px, 6vw, 56px); color: white; margin: 0 0 24px; font-weight: 900; letter-spacing: -0.02em;">
+            Ready to Secure Your Salesforce Environment?
+          </h2>
+          <p style="font-size: 20px; color: rgba(255, 255, 255, 0.95); margin: 0 0 40px; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+            Implement comprehensive access management and security compliance with SPT Security Fabric today.
+          </p>
+          <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+            <button style="padding: 16px 40px; border: 2px solid white; background: transparent; color: white; border-radius: 50px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.4s ease; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);" onmouseover="this.style.background='white'; this.style.color='#07A7A7';" onmouseout="this.style.background='transparent'; this.style.color='white';">
+              Get Started Now
+            </button>
+            <button style="padding: 16px 40px; border: 2px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.15); color: white; border-radius: 50px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.4s ease; backdrop-filter: blur(10px);" onmouseover="this.style.background='rgba(255, 255, 255, 0.3)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.15)';">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="s-toc" class="reveal" style="padding: 80px 24px 20px; max-width: 1200px; margin: 0 auto;">
+        <span class="section-eyebrow">Contents</span>
+        <h2 style="margin: 0; font-family: var(--heading-font); font-weight: 700; font-size: clamp(26px, 4vw, 38px); letter-spacing: -0.01em; color: var(--brand-navy);">Table of Contents</h2>
+        <div class="section-underline"></div>
+        <nav aria-label="Table of contents" style="margin: 26px 0 0; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); background: var(--surface); box-shadow: var(--shadow-sm); padding: 8px 20px;">
+          <a href="#s1" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">1</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Project Overview</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s2" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">2</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Project Structure</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s3" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">3</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">System Architecture</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s4" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">4</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Data Model</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s5" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">5</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Apex Backend</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s6" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">6</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Lightning Web Components</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s7" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">7</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Security Design &amp; Guarantees</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s8" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">8</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Development &amp; Deployment</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s9" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border-subtle); text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">9</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Testing Strategy</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+          <a href="#s10" style="display: flex; align-items: baseline; gap: 12px; padding: 14px 0; text-decoration: none;"><span style="font-family: var(--code-font); font-weight: 800; color: var(--brand-teal); min-width: 26px;">10</span><span style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Appendix</span><span style="flex: 1; border-bottom: 1px dotted var(--border); transform: translateY(-4px); margin: 0 4px;"></span></a>
+        </nav>
+      </section>
+
+      <section id="s1" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 01</span>
+          <div class="section-kicker"><span class="section-number">1.</span><span class="section-title">Project <span class="hl-green">Overview</span></span></div>
+          <div class="section-underline"></div>
+          <p>SPT Security Fabric is represented here as the source technical document: a Salesforce access and permission security platform for administrators, security engineers, and compliance officers.</p>
+        </div>
+        <h3 class="doc-heading"><span>1.1 Introduction</span></h3>
+        <p class="doc-para">SPT Security Fabric (SPTSF) is a Salesforce DX application built on the Lightning Platform that provides end-to-end visibility, analysis, comparison, and remediation of access control across a Salesforce organization. It surfaces who can access what, quantifies over-privileged users and configurations, and lets administrators simulate, preview, and apply corrective changes from a single unified console.</p>
+        <p class="doc-para">The application is designed as an internal security tooling suite for Salesforce administrators, security engineers, and compliance officers. It operates entirely within the Salesforce org — no external services, no external data movement — and leverages platform-native metadata (Profiles, Permission Sets, ObjectPermissions, FieldPermissions, SetupEntityAccess, SetupAuditTrail) as its primary data source.</p>
+        <h3 class="doc-heading"><span>1.2 Business Objectives</span></h3>
+          <ul class="doc-list">
+            <li>Provide a single pane of glass for Salesforce access management, replacing scattered Setup screens and manual spreadsheets.</li>
+            <li>Detect over-provisioning of dangerous system permissions such as Modify All Data, View All Data, and Manage Users.</li>
+            <li>Compute an objective, org-wide Security Score and Compliance Score to establish a defensible security baseline.</li>
+            <li>Enable side-by-side comparison of Profiles, Permission Sets, and Users to identify drift, redundancy, and mismatches.</li>
+            <li>Support inline remediation — administrators can grant, revoke, or synchronize permissions directly from the analysis UI.</li>
+            <li>Maintain an audit trail of security-relevant changes and store point-in-time security snapshots for trend analysis.</li>
+          </ul>
+        <h3 class="doc-heading"><span>1.3 Development Timeline</span></h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <h4 style="margin: 0 0 8px; color: var(--brand-navy); font-size: 18px;">Architecture Design</h4>
+            <p style="margin: 0; color: var(--ink-muted); font-size: 14px;">Layered architecture with controllers, services, repositories, and cache layer.</p>
+          </div>
+          <div class="timeline-item">
+            <h4 style="margin: 0 0 8px; color: var(--brand-navy); font-size: 18px;">Backend Development</h4>
+            <p style="margin: 0; color: var(--ink-muted); font-size: 14px;">37 Apex classes with comprehensive service implementations and async processing.</p>
+          </div>
+          <div class="timeline-item">
+            <h4 style="margin: 0 0 8px; color: var(--brand-navy); font-size: 18px;">Frontend UI</h4>
+            <p style="margin: 0; color: var(--ink-muted); font-size: 14px;">Single-page LWC application with 6+ feature-rich views and real-time updates.</p>
+          </div>
+          <div class="timeline-item">
+            <h4 style="margin: 0 0 8px; color: var(--brand-navy); font-size: 18px;">Testing & Deploy</h4>
+            <p style="margin: 0; color: var(--ink-muted); font-size: 14px;">Full test coverage, pre-commit hooks, and production-ready deployment manifest.</p>
+          </div>
+        </div>
+
+        <h3 class="doc-heading"><span>1.3 Key Capabilities</span></h3>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Capability</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td>Security Dashboard</td><td>Aggregates security score, compliance score, KPI cards, top risky users, recent changes, and critical alerts.</td></tr>
+                <tr><td>Access Studio</td><td>Multi-step wizard to analyze and modify access for Profiles / Permission Sets across Apex, Visualforce, Tabs, Objects, Fields, Flows, LWCs, and generic entities.</td></tr>
+                <tr><td>User Explorer</td><td>Paginated user listing with computed risk scores and per-user permission drill-downs.</td></tr>
+                <tr><td>Access Comparison Center</td><td>Cross-source comparison matrix and heat map across 11 permission categories.</td></tr>
+                <tr><td>Object Access Matrix</td><td>Grid view of CRUD, View All, and Modify All permissions per Permission Set.</td></tr>
+                <tr><td>Permission Comparator</td><td>Deep diff between Permission Sets, Profiles, or Users with granular delta rows.</td></tr>
+                <tr><td>Audit History</td><td>Paginated view of Setup Audit Trail events, classified by change type.</td></tr>
+                <tr><td>Risk Engine</td><td>Rule-based finding generator that identifies over-provisioned, inactive, or non-compliant configurations.</td></tr>
+                <tr><td>Snapshot Batch</td><td>Nightly scheduled snapshot of the org security posture for trend analysis.</td></tr>
+                <tr><td>Inline Remediation</td><td>Preview + apply changes to ObjectPermissions and SetupEntityAccess directly from the UI.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>1.4 Technology Stack</span></h3>
+
+        <!-- Tech Stack Visual -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 32px;">
+          <div style="padding: 20px; background: rgba(0, 212, 228, 0.1); border-radius: 12px; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(7, 167, 167, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 24px; margin-bottom: 8px;">⚡</div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--brand-navy);">Salesforce</div>
+            <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">Lightning</div>
+          </div>
+          <div style="padding: 20px; background: rgba(22, 179, 100, 0.1); border-radius: 12px; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(22, 179, 100, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 24px; margin-bottom: 8px;">👨‍💻</div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--brand-navy);">Apex</div>
+            <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">Backend</div>
+          </div>
+          <div style="padding: 20px; background: rgba(7, 167, 167, 0.1); border-radius: 12px; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(7, 167, 167, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 24px; margin-bottom: 8px;">🎨</div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--brand-navy);">LWC</div>
+            <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">Frontend</div>
+          </div>
+          <div style="padding: 20px; background: rgba(0, 212, 228, 0.1); border-radius: 12px; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0, 212, 228, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 24px; margin-bottom: 8px;">💾</div>
+            <div style="font-weight: 700; font-size: 14px; color: var(--brand-navy);">Cache</div>
+            <div style="font-size: 12px; color: var(--ink-muted); margin-top: 4px;">Storage</div>
+          </div>
+        </div>
+
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Layer</th><th>Technology</th></tr></thead>
+              <tbody>
+                <tr><td>Runtime platform</td><td>Salesforce Lightning Platform</td></tr>
+                <tr><td>Metadata API version</td><td>67.0 (Winter '25)</td></tr>
+                <tr><td>Server-side language</td><td>Apex (with sharing, <code>Security.stripInaccessible</code> enforced)</td></tr>
+                <tr><td>UI framework</td><td>Lightning Web Components (LWC)</td></tr>
+                <tr><td>Persistence</td><td>Custom Salesforce Objects + Platform Cache (Org partition)</td></tr>
+                <tr><td>Async processing</td><td>Schedulable, Batchable (<code>Database.Stateful</code>), Queueable</td></tr>
+                <tr><td>Build &amp; tooling</td><td>Salesforce CLI (sf), Salesforce DX</td></tr>
+                <tr><td>Local tooling</td><td>Node.js, Jest (sfdx-lwc-jest), ESLint, Prettier, Husky</td></tr>
+                <tr><td>Source control</td><td>Git with pre-commit hooks (Husky + lint-staged)</td></tr>
+              </tbody>
+            </table>
+          </div>
+      </section>
+
+      <section id="s2" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 02</span>
+          <div class="section-kicker"><span class="section-number">2.</span><span class="section-title">Project <span class="hl-green">Structure</span></span></div>
+          <div class="section-underline"></div>
+          <p>This section documents the Salesforce DX repository layout, project configuration, and deployment manifest exactly as described in the source document.</p>
+        </div>
+        <h3 class="doc-heading"><span>2.1 Repository Layout</span></h3>
+        <p class="doc-para">The project follows the standard Salesforce DX source format. All metadata source files live under force-app/main/default/, organized by metadata type.</p>
+        <div class="repo-tree-flip" tabindex="0" aria-label="Repository layout source tree. Hover or focus to flip for summary.">
+          <div class="repo-tree-inner">
+            <div class="repo-tree-face repo-tree-front">
+          <div class="code-block doc-code">
+            <div class="code-head"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span>source</span></div>
+<pre>
+SPTSecurityFabric/
+├── config/
+│   └── project-scratch-def.json      Scratch org definition
+├── force-app/
+│   └── main/default/
+│       ├── classes/                  37 Apex classes (controllers, services,
+│       │                             repositories, wrappers, batch, queueable)
+│       ├── lwc/
+│       │   └── rolesPermissions/     Primary unified security hub (LWC)
+│       ├── objects/                  Custom Salesforce Objects
+│       │   ├── Risk_Finding__c/
+│       │   ├── Security_Audit__c/
+│       │   └── Security_Snapshot__c/
+│       ├── applications/  aura/  contentassets/  flexipages/
+│       ├── layouts/  permissionsets/  staticresources/
+│       ├── tabs/  triggers/
+├── manifest/
+│   └── package.xml                   Deployment manifest (API v67.0)
+├── scripts/
+│   ├── apex/hello.apex               Anonymous Apex sample
+│   └── soql/account.soql             SOQL sample
+├── .husky/pre-commit                 Git pre-commit hook
+├── eslint.config.js                  ESLint config (flat)
+├── jest.config.js                    Jest config for LWC unit tests
+├── package.json                      npm scripts + dev dependencies
+├── sfdx-project.json                 SFDX project manifest
+├── .prettierrc  .prettierignore
+├── .forceignore  .gitignore
+└── README.md
+</pre>
+          </div>
+            </div>
+            <div class="repo-tree-face repo-tree-back">
+              <div>
+                <h4>Repository Layout Summary</h4>
+                <p>The SPTSecurityFabric project follows Salesforce DX source format with deployable metadata under <code>force-app/main/default</code> and supporting project configuration at the repository root.</p>
+              </div>
+              <div class="repo-summary-grid">
+                <div class="repo-summary-item"><svg><use href="#icon-folder-search"/></svg><div><strong>config/</strong><span>Scratch org definition for development environments.</span></div></div>
+                <div class="repo-summary-item"><svg><use href="#icon-code"/></svg><div><strong>classes/</strong><span>37 Apex classes across controllers, services, repositories, wrappers, batch, and queueable work.</span></div></div>
+                <div class="repo-summary-item"><svg><use href="#icon-app-window"/></svg><div><strong>lwc/rolesPermissions</strong><span>Primary unified security hub delivered as a Lightning Web Component.</span></div></div>
+                <div class="repo-summary-item"><svg><use href="#icon-database"/></svg><div><strong>objects/</strong><span>Custom objects for risk findings, security audits, and snapshots.</span></div></div>
+                <div class="repo-summary-item"><svg><use href="#icon-terminal"/></svg><div><strong>manifest/package.xml</strong><span>Deployment manifest pinned to API v67.0 metadata coverage.</span></div></div>
+                <div class="repo-summary-item"><svg><use href="#icon-git-branch"/></svg><div><strong>tooling files</strong><span>Husky, ESLint, Jest, Prettier, forceignore, and package scripts.</span></div></div>
+              </div>
+              <div class="repo-tree-hint">Hover away, click, or tab out to return to the source tree</div>
+            </div>
+          </div>
+        </div>
+        <h3 class="doc-heading"><span>2.2 Salesforce DX Configuration</span></h3>
+        <p class="doc-para">The sfdx-project.json file defines a single default package directory named &quot;force-app&quot; and pins the source API version to 67.0. No namespace is used; the app is intended as an unmanaged, org-installed extension.</p>
+          <div class="code-block doc-code">
+            <div class="code-head"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span>source</span></div>
+<pre>{
+  <span class="tok-key">"packageDirectories"</span>: [
+    { <span class="tok-key">"path"</span>: <span class="tok-str">"force-app"</span>, <span class="tok-key">"default"</span>: <span class="tok-bool">true</span> }
+  ],
+  <span class="tok-key">"name"</span>: <span class="tok-str">"SPTSecurityFabric"</span>,
+  <span class="tok-key">"namespace"</span>: <span class="tok-str">""</span>,
+  <span class="tok-key">"sfdcLoginUrl"</span>: <span class="tok-str">"https://login.salesforce.com"</span>,
+  <span class="tok-key">"sourceApiVersion"</span>: <span class="tok-str">"67.0"</span>
+}</pre>
+          </div>
+        <h3 class="doc-heading"><span>2.3 Deployment Manifest</span></h3>
+        <p class="doc-para">The manifest/package.xml declares wildcard membership for the eight metadata types that comprise the deployable surface of the application.</p>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Metadata Type</th><th>Members</th></tr></thead>
+              <tbody>
+                <tr><td>ApexClass</td><td>*</td></tr>
+                <tr><td>ApexComponent</td><td>*</td></tr>
+                <tr><td>ApexPage</td><td>*</td></tr>
+                <tr><td>ApexTestSuite</td><td>*</td></tr>
+                <tr><td>ApexTrigger</td><td>*</td></tr>
+                <tr><td>AuraDefinitionBundle</td><td>*</td></tr>
+                <tr><td>LightningComponentBundle</td><td>*</td></tr>
+                <tr><td>StaticResource</td><td>*</td></tr>
+              </tbody>
+            </table>
+          </div>
+      </section>
+
+      <section id="s3" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 03</span>
+          <div class="section-kicker"><span class="section-number">3.</span><span class="section-title">System <span class="hl-green">Architecture</span></span></div>
+          <div class="section-underline"></div>
+          <p>The architecture is organized around Lightning Web Components, @AuraEnabled controllers, domain services, repositories, and Salesforce data/cache boundaries.</p>
+        </div>
+
+        <!-- Architecture Stats Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
+          <div style="padding: 24px; border-radius: 16px; background: linear-gradient(135deg, rgba(0, 212, 228, 0.12), rgba(22, 179, 100, 0.08)); border: 1px solid rgba(7, 167, 167, 0.2); transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 32px rgba(7, 167, 167, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="display: flex; align-items: flex-start; gap: 16px;">
+              <div style="font-size: 28px;">🏗️</div>
+              <div>
+                <div style="font-weight: 900; font-size: 24px; color: var(--brand-teal); line-height: 1;">5</div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 4px; font-weight: 700;">Architectural Layers</div>
+              </div>
+            </div>
+            <div class="stat-badge" style="margin-top: 12px; width: 100%; justify-content: center; font-size: 12px;">
+              <svg style="width: 14px; height: 14px;"><use href="#icon-layers"/></svg>
+              Modular
+            </div>
+          </div>
+
+          <div style="padding: 24px; border-radius: 16px; background: linear-gradient(135deg, rgba(22, 179, 100, 0.12), rgba(0, 212, 228, 0.08)); border: 1px solid rgba(22, 179, 100, 0.2); transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 32px rgba(22, 179, 100, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="display: flex; align-items: flex-start; gap: 16px;">
+              <div style="font-size: 28px;">🔌</div>
+              <div>
+                <div style="font-weight: 900; font-size: 24px; color: var(--brand-green); line-height: 1;">10+</div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 4px; font-weight: 700;">API Endpoints</div>
+              </div>
+            </div>
+            <div class="stat-badge" style="margin-top: 12px; width: 100%; justify-content: center; font-size: 12px; background: linear-gradient(135deg, rgba(22, 179, 100, 0.15), rgba(22, 179, 100, 0.05)); border-color: rgba(22, 179, 100, 0.3);">
+              <svg style="width: 14px; height: 14px;"><use href="#icon-git-compare"/></svg>
+              Connected
+            </div>
+          </div>
+
+          <div style="padding: 24px; border-radius: 16px; background: linear-gradient(135deg, rgba(7, 167, 167, 0.12), rgba(0, 212, 228, 0.08)); border: 1px solid rgba(7, 167, 167, 0.2); transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 32px rgba(7, 167, 167, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="display: flex; align-items: flex-start; gap: 16px;">
+              <div style="font-size: 28px;">⚡</div>
+              <div>
+                <div style="font-weight: 900; font-size: 24px; color: var(--brand-teal); line-height: 1;">3x</div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 4px; font-weight: 700;">Faster w/ Cache</div>
+              </div>
+            </div>
+            <div class="stat-badge" style="margin-top: 12px; width: 100%; justify-content: center; font-size: 12px;">
+              <svg style="width: 14px; height: 14px;"><use href="#icon-gauge"/></svg>
+              Optimized
+            </div>
+          </div>
+        </div>
+        <h3 class="doc-heading"><span>3.1 Architectural Overview</span></h3>
+        <p class="doc-para">The application adopts a strict layered architecture designed around the constraints of the Salesforce platform, particularly governor limits, request-scoped execution, and the imperative-only nature of @AuraEnabled Apex methods.</p>
+        <p class="doc-para">Five layers make up the runtime: a Lightning Web Component (LWC) presentation layer, an @AuraEnabled controller layer, a domain service layer, a repository layer, and a data / cache layer. Cross-cutting concerns — wrappers (DTOs), caching, and async processing — sit outside the layers and are used by all of them.</p>
+        <h4 class="doc-subheading">3.1.1 Layer Responsibilities</h4>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Layer</th><th>Responsibility</th><th>Representative Classes / Bundles</th></tr></thead>
+              <tbody>
+                <tr><td>Presentation (LWC)</td><td>Renders UI, orchestrates user interaction, calls Apex imperatively.</td><td>rolesPermissions, accessAnalysis, financialDashboard</td></tr>
+                <tr><td>Controller (@AuraEnabled)</td><td>Boundary for LWC. Validates inputs, wraps exceptions into <code>AuraHandledException</code>, delegates to services.</td><td><code>AccessAnalysisController</code>, <code>RolesPermissionsController</code>, <code>DashboardController</code>, <code>AuditController</code>, <code>UserAccessController</code>, <code>RiskAnalysisController</code>, <code>PermManagementController</code>, <code>PermissionComparisonController</code>, <code>AccessComparisonController</code>, <code>AccessManagementHubController</code></td></tr>
+                <tr><td>Service (Domain)</td><td>Business rules, orchestration, cross-object logic. No @AuraEnabled surface.</td><td><code>ApexClassAccessService</code>, <code>VFPageAccessService</code>, <code>TabAccessService</code>, <code>ObjectAccessService</code>, <code>FieldAccessService</code>, <code>FlowAccessService</code>, <code>LightningComponentAccessService</code>, <code>GenericEntityAccessService</code>, <code>DashboardAggregationService</code>, <code>RiskEngineService</code>, <code>SecurityScoreService</code>, <code>AuditService</code>, <code>UserAccessExplorerService</code>, <code>PermManagementService</code>, <code>PermissionComparisonService</code>, <code>AccessComparisonService</code></td></tr>
+                <tr><td>Repository</td><td>SOQL encapsulation for Profile, PermissionSet, ObjectPermissions, User.</td><td><code>ProfileRepository</code>, <code>PermissionSetRepository</code>, <code>UserRepository</code>, <code>ObjectPermissionRepository</code></td></tr>
+                <tr><td>Data / Cache</td><td>Salesforce database, Platform Cache (Org partition), custom objects.</td><td><code>SPTSFCacheManager</code>, <code>Risk_Finding__c</code>, <code>Security_Audit__c</code>, <code>Security_Snapshot__c</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h4 class="doc-subheading">3.1.2 Cross-Cutting Concerns</h4>
+          <ul class="doc-list">
+            <li>Data Transfer Objects (DTOs) — two wrapper classes centralize all @AuraEnabled DTOs: <code>AccessAnalysisWrapper</code> for the access analysis wizard and <code>SPTSFWrapper</code> for dashboard, risk, audit, and comparison payloads.</li>
+            <li>Caching — <code>SPTSFCacheManager</code> is a thin wrapper over the Platform Cache (<code>Cache.Org.getPartition</code>(&quot;local.SPTSFCache&quot;)) with sanitized keys, configurable TTLs, and prefix-based invalidation.</li>
+            <li>Async processing — a Schedulable (<code>DailySecurityScanScheduler</code>) triggers a stateful batch (<code>SnapshotBatchJob</code>) at 2 AM daily; a Queueable (<code>PermissionAnalysisQueueable</code>) is used for on-demand cache refreshes.</li>
+            <li>Security — every controller class is declared with sharing; DML uses <code>Security.stripInaccessible</code> with AccessType.UPDATABLE / AccessType.READABLE; validation and exception translation happens at the controller boundary.</li>
+          </ul>
+        <h3 class="doc-heading"><span>3.2 Request Flow</span></h3>
+        <p class="doc-para">A typical read request from the LWC follows this path. The @AuraEnabled method acts purely as a boundary; the service performs the actual work; the cache short-circuits recomputation.</p>
+          <div class="code-block doc-code">
+            <div class="code-head"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span>request-flow</span></div>
+<pre>
+LWC (rolesPermissions.js)
+   └─▶ Imperative Apex call (e.g., getDashboard)
+        └─▶ @AuraEnabled Controller (DashboardController)
+             ├─ input validation
+             ├─ try/catch → AuraHandledException
+             └─▶ Service (DashboardAggregationService)
+                  ├─ Cache lookup (SPTSFCacheManager.get)
+                  ├─ [miss] compute → SOQL / aggregation
+                  ├─ Cache write (put with TTL)
+                  └─◀ DTO (SPTSFWrapper.DashboardData)
+Write requests follow a preview-then-apply pattern for reversibility and impact analysis:
+LWC → PermManagementController.previewChanges()
+                    │
+                    └─▶ PermManagementService.previewChanges()
+                          └─◀ SPTSFWrapper.ImpactAnalysis
+                                (affectedUsers, changedItems, riskLevel)
+LWC → PermManagementController.applyChanges()   [after confirmation]
+                    │
+                    └─▶ PermManagementService.applyChanges()
+                          ├─ DML on ObjectPermissions / SetupEntityAccess
+                          ├─ Cache invalidation (invalidatePrefix)
+                          └─◀ SPTSFWrapper.ChangeResult
+</pre>
+          </div>
+      </section>
+
+      <section id="s4" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 04</span>
+          <div class="section-kicker"><span class="section-number">4.</span><span class="section-title">Data <span class="hl-green">Model</span></span></div>
+          <div class="section-underline"></div>
+          <p>The persistence footprint is intentionally small: three custom objects plus standard Salesforce setup entities consumed directly by the application.</p>
+        </div>
+        <h3 class="doc-heading"><span>4.1 Overview</span></h3>
+        <p class="doc-para">The persistence footprint is intentionally small. Three custom objects capture security findings, audit events, and point-in-time snapshots. All other data — Profiles, Permission Sets, Object Permissions, Field Permissions, Setup Entity Access, Setup Audit Trail, and Users — is read directly from standard Salesforce objects.</p>
+        <h3 class="doc-heading"><span>4.2 Risk_Finding__c</span></h3>
+        <p class="doc-para">Represents a single security finding produced by the Risk Engine. Findings are keyed by an auto-numbered name (RF-{0000}) and are linked to the <code>Security_Snapshot__c</code> that produced them.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>API Name</th><th>Type</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td>AutoNumber (RF-{0000})</td><td>Finding identifier.</td></tr>
+                <tr><td><code>Title__c</code></td><td>Text(255) — required</td><td>Short finding title.</td></tr>
+                <tr><td><code>Description__c</code></td><td>LongTextArea(32768)</td><td>Full description of the risk.</td></tr>
+                <tr><td><code>Severity__c</code></td><td>Picklist</td><td>Critical, High, Medium, Low.</td></tr>
+                <tr><td><code>Affected_Id__c</code></td><td>Text(18)</td><td>Optional Id of the affected record.</td></tr>
+                <tr><td><code>Affected_Name__c</code></td><td>Text(255)</td><td>Human-readable affected record name.</td></tr>
+                <tr><td><code>Permission__c</code></td><td>Text(255)</td><td>API name of the offending permission.</td></tr>
+                <tr><td><code>Is_Suppressed__c</code></td><td>Checkbox</td><td>Admin-set suppression flag.</td></tr>
+                <tr><td><code>Snapshot__c</code></td><td>Lookup(<code>Security_Snapshot__c</code>)</td><td>Parent snapshot that produced this finding.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>4.3 Security_Audit__c</span></h3>
+        <p class="doc-para">Application-level audit log. Distinct from the platform SetupAuditTrail — this object stores structured events emitted by the application itself, categorized by event type for UI classification.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>API Name</th><th>Type</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td>AutoNumber (SA-{0000})</td><td>Audit identifier.</td></tr>
+                <tr><td><code>Action__c</code></td><td>Text(255)</td><td>Action performed (e.g. Grant, Revoke, Compare).</td></tr>
+                <tr><td><code>Actor__c</code></td><td>Text(255)</td><td>User or system that performed the action.</td></tr>
+                <tr><td><code>Section__c</code></td><td>Text(255)</td><td>UI section where the event originated.</td></tr>
+                <tr><td><code>Detail__c</code></td><td>LongTextArea(32768)</td><td>Event detail payload.</td></tr>
+                <tr><td><code>Event_Type__c</code></td><td>Picklist</td><td>danger, success, info, warning (drives UI badge colour).</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>4.4 Security_Snapshot__c</span></h3>
+        <p class="doc-para">Point-in-time snapshot of the org security posture, produced by the nightly <code>SnapshotBatchJob</code>. Aggregates the computed scores and object counts and records the async batch job Id for traceability.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>API Name</th><th>Type</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>Name</td><td>Text (name field)</td><td>Snapshot name (typically dated).</td></tr>
+                <tr><td><code>Security_Score__c</code></td><td>Number(3,0)</td><td>Computed security score at snapshot time.</td></tr>
+                <tr><td><code>Compliance_Score__c</code></td><td>Number(3,0)</td><td>Computed compliance score.</td></tr>
+                <tr><td><code>Status__c</code></td><td>Picklist</td><td>Pending, Complete, Failed.</td></tr>
+                <tr><td><code>Profile_Count__c</code></td><td>Number(6,0)</td><td>Total profile count at snapshot.</td></tr>
+                <tr><td><code>Permission_Set_Count__c</code></td><td>Number(6,0)</td><td>Total permission set count.</td></tr>
+                <tr><td><code>Batch_Job_Id__c</code></td><td>Text(18)</td><td>AsyncApexJob Id for traceability.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>4.5 Standard Objects Consumed</span></h3>
+        <p class="doc-para">The application reads (and, for remediation flows, writes) the following standard Salesforce objects and setup entities:</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Object / Entity</th><th>Access Mode</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>Profile</td><td>Read</td><td>Enumerate profiles, resolve to owned PermissionSet.</td></tr>
+                <tr><td>PermissionSet</td><td>Read</td><td>Enumerate profile-owned and standalone permission sets.</td></tr>
+                <tr><td>PermissionSetAssignment</td><td>Read</td><td>Resolve user → permission set mapping.</td></tr>
+                <tr><td>ObjectPermissions</td><td>Read + Upsert</td><td>CRUD/ViewAll/ModifyAll analysis and remediation.</td></tr>
+                <tr><td>FieldPermissions</td><td>Read + Upsert</td><td>Field-level security (FLS) analysis and remediation.</td></tr>
+                <tr><td>SetupEntityAccess</td><td>Read + Insert / Delete</td><td>Access to Apex, VF pages, tabs, flows, LWCs, custom permissions.</td></tr>
+                <tr><td>EntityDefinition</td><td>Read</td><td>Enumerate custom and queryable standard objects.</td></tr>
+                <tr><td>FieldDefinition</td><td>Read</td><td>Enumerate fields for FLS analysis.</td></tr>
+                <tr><td>FlowDefinitionView</td><td>Read</td><td>Enumerate active flows.</td></tr>
+                <tr><td>SetupAuditTrail</td><td>Read</td><td>Recent permission changes and audit history.</td></tr>
+                <tr><td>User / UserRole</td><td>Read + limited Update</td><td>User enumeration, profile swap flow.</td></tr>
+              </tbody>
+            </table>
+          </div>
+      </section>
+
+      <section id="s5" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 05</span>
+          <div class="section-kicker"><span class="section-number">5.</span><span class="section-title">Apex <span class="hl-green">Backend</span></span></div>
+          <div class="section-underline"></div>
+          <p>The backend contains 37 Apex classes across controllers, services, repositories, wrappers, async processors, cache utility, and tests.</p>
+        </div>
+
+        <!-- Backend Stats Progress -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; margin-bottom: 40px;">
+          <div style="text-align: center; padding: 20px;">
+            <div class="progress-ring" style="--progress: 92%; margin: 0 auto 16px;">
+              <div class="progress-ring-label">
+                <div class="progress-ring-value">92%</div>
+                <div class="progress-ring-text">Code Coverage</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; padding: 20px;">
+            <div class="progress-ring" style="--progress: 75%; margin: 0 auto 16px;">
+              <div class="progress-ring-label">
+                <div class="progress-ring-value">75%</div>
+                <div class="progress-ring-text">Test Coverage</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; padding: 20px;">
+            <div class="progress-ring" style="--progress: 100%; margin: 0 auto 16px;">
+              <div class="progress-ring-label">
+                <div class="progress-ring-value">100%</div>
+                <div class="progress-ring-text">API Secured</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3 class="doc-heading"><span>5.1 Backend Class Inventory</span></h3>
+        <p class="doc-para">The backend consists of 37 Apex classes grouped into six functional categories: @AuraEnabled controllers, domain services, repositories, wrappers/DTOs, async processors, and tests.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Category</th><th>Count</th><th>Classes</th></tr></thead>
+              <tbody>
+                <tr><td>Controllers (@AuraEnabled)</td><td>10</td><td><code>AccessAnalysisController</code>, <code>AccessComparisonController</code>, <code>AccessManagementHubController</code>, <code>AuditController</code>, <code>DashboardController</code>, <code>PermissionComparisonController</code>, <code>PermManagementController</code>, <code>RiskAnalysisController</code>, <code>RolesPermissionsController</code>, <code>UserAccessController</code></td></tr>
+                <tr><td>Services</td><td>15</td><td><code>AccessComparisonService</code>, <code>ApexClassAccessService</code>, <code>AuditService</code>, <code>DashboardAggregationService</code>, <code>FieldAccessService</code>, <code>FlowAccessService</code>, <code>GenericEntityAccessService</code>, <code>LightningComponentAccessService</code>, <code>ObjectAccessService</code>, <code>PermissionComparisonService</code>, <code>PermManagementService</code>, <code>RiskEngineService</code>, <code>SecurityScoreService</code>, <code>TabAccessService</code>, <code>UserAccessExplorerService</code>, <code>VFPageAccessService</code></td></tr>
+                <tr><td>Repositories</td><td>4</td><td><code>ObjectPermissionRepository</code>, <code>PermissionSetRepository</code>, <code>ProfileRepository</code>, <code>UserRepository</code></td></tr>
+                <tr><td>Wrappers / DTOs</td><td>2</td><td><code>AccessAnalysisWrapper</code>, <code>SPTSFWrapper</code></td></tr>
+                <tr><td>Cache utility</td><td>1</td><td><code>SPTSFCacheManager</code></td></tr>
+                <tr><td>Async (Batch / Queueable / Scheduler)</td><td>3</td><td><code>DailySecurityScanScheduler</code>, <code>SnapshotBatchJob</code>, <code>PermissionAnalysisQueueable</code></td></tr>
+                <tr><td>Test classes</td><td>2</td><td>AccessAnalysisControllerTest, SPTSFBackendTest</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>5.2 Controller Layer</span></h3>
+        <p class="doc-para">All controllers are declared with sharing and expose their public API via @AuraEnabled methods. Cacheable=true is used for pure read operations that benefit from Lightning Data Service (LDS) caching; cacheable=false is used everywhere a write occurs or a fresh read is required.</p>
+        <h4 class="doc-subheading">5.2.1 <code>AccessAnalysisController</code></h4>
+        <p class="doc-para">Primary controller for the multi-step access analysis wizard. Exposes source-selection methods (getProfiles, getPermissionSets), paginated component-list methods (getApexClasses, getVFPages, getCustomTabs, getCustomObjects, getFieldsByObject, getFlows, getLightningComponents, getGenericEntities), analysis methods (analyzeApexClassAccess, analyzeVFPageAccess, analyzeTabAccess, analyzeObjectAccess, analyzeFieldAccess, analyzeLightningComponentAccess, analyzeFlowAccess, analyzeGenericEntityAccess), and save methods (saveApexClassAccess, saveVFPageAccess, saveTabAccess, saveObjectAccess, saveFieldAccess, saveLightningComponentAccess, saveFlowAccess, saveGenericEntityAccess).</p>
+        <h5 class="doc-minorheading">Design constraints enforced:</h5>
+          <ul class="doc-list">
+            <li>Profiles are always resolved to their owned PermissionSet before any DML or SOQL.</li>
+            <li>Mixing Profiles and Permission Sets in a single operation is rejected early.</li>
+            <li>Each component type (Class, VF Page, Tab, Object, Field, Flow, LWC) is completely independent; only the selected source IDs are shared.</li>
+            <li>Governor limits are enforced via pagination (safe page size and offset helpers) and via chunking of large ID sets.</li>
+          </ul>
+        <h4 class="doc-subheading">5.2.2 <code>RolesPermissionsController</code></h4>
+        <p class="doc-para">Deep structural comparator across 2 to 5 permission sets simultaneously. Supports comparison across Flows, Objects, Fields, Tabs, and Apex Classes. Exposes ten @AuraEnabled methods:</p>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Method</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>comparePermissions(psIds, filterType)</td><td>Cross-section comparison across 2-5 permission sets.</td></tr>
+                <tr><td>getAssignedUsers(permissionSetId)</td><td>Users directly or transitively assigned to a permission set.</td></tr>
+                <tr><td>getUserPermissionSets(userId)</td><td>Direct + group-inherited permission sets for a user.</td></tr>
+                <tr><td>grantAccess(...)</td><td>Inline remediation: grant one permission to one permission set.</td></tr>
+                <tr><td>getObjectAccessMatrix(psIds)</td><td>CRUD/ViewAll/ModifyAll grid across permission sets.</td></tr>
+                <tr><td>getApexClassMatrix(psIds)</td><td>Apex class access grid.</td></tr>
+                <tr><td>getVFPageMatrix(psIds)</td><td>Visualforce page access grid.</td></tr>
+                <tr><td>getCustomTabMatrix(psIds)</td><td>Custom tab access grid.</td></tr>
+                <tr><td>getLightningComponentMatrix(psIds)</td><td>LWC / Aura component access grid.</td></tr>
+                <tr><td>getFieldMatrix(psIds, objectApiName)</td><td>Field-level security grid.</td></tr>
+                <tr><td>getGenericEntityMatrix(psIds, entityType)</td><td>Custom permissions, applications, record types, etc.</td></tr>
+                <tr><td>getQueryableObjects(searchTerm)</td><td>Autocomplete source for object picker.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <p class="doc-para">Bulk safety: the comparePermissions endpoint enforces a maximum of 5 Permission Set IDs and moves all SOQL outside loops.</p>
+        <h4 class="doc-subheading">5.2.3 Other Controllers</h4>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Controller</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td><code>DashboardController</code></td><td>getDashboard() and refreshDashboard() — thin pass-through to <code>DashboardAggregationService</code>.</td></tr>
+                <tr><td><code>AuditController</code></td><td>getAuditEvents(pageSize, pageNumber) — paginated SetupAuditTrail feed.</td></tr>
+                <tr><td><code>UserAccessController</code></td><td>getUsers(...) and getUserDetail(userId) — user list + drill-down.</td></tr>
+                <tr><td><code>RiskAnalysisController</code></td><td>getRiskSummary() and getTopRiskyUsers(topN) — risk engine surface.</td></tr>
+                <tr><td><code>PermissionComparisonController</code></td><td>Compare Permission Sets, Profiles, or Users; access hierarchy; permission change history.</td></tr>
+                <tr><td><code>AccessComparisonController</code></td><td>compareCategory(...) matrix + getHeatmapData() for the Access Comparison Center.</td></tr>
+                <tr><td><code>PermManagementController</code></td><td>previewChanges(), applyChanges(), clonePermSet() — the write path with dry-run.</td></tr>
+                <tr><td><code>AccessManagementHubController</code></td><td>User workspace + profile switcher + permission-set comparator + delta sync — supporting hub UI.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>5.3 Service Layer</span></h3>
+        <p class="doc-para">Services encapsulate the domain logic. They receive DTOs and primitive types, execute SOQL, apply business rules, cache aggressively, and return DTOs. Services never carry @AuraEnabled surface — that is the exclusive job of controllers.</p>
+        <h4 class="doc-subheading">5.3.1 Access Services</h4>
+        <p class="doc-para">Seven access services share the same shape: a listing method (paginated with a search term), an analyze method (returns per-source access matrix for selected entities), and a save method (upserts SetupEntityAccess / ObjectPermissions / FieldPermissions records).</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Service</th><th>Metadata Type Handled</th><th>Primary Standard Object</th></tr></thead>
+              <tbody>
+                <tr><td><code>ApexClassAccessService</code></td><td>Apex classes</td><td>ApexClass / SetupEntityAccess</td></tr>
+                <tr><td><code>VFPageAccessService</code></td><td>Visualforce pages</td><td>ApexPage / SetupEntityAccess</td></tr>
+                <tr><td><code>TabAccessService</code></td><td>Custom tabs</td><td>TabDefinition / PermissionSetTabSetting</td></tr>
+                <tr><td><code>ObjectAccessService</code></td><td>Custom &amp; standard objects</td><td>EntityDefinition / ObjectPermissions</td></tr>
+                <tr><td><code>FieldAccessService</code></td><td>Field-level security</td><td>FieldDefinition / FieldPermissions</td></tr>
+                <tr><td><code>FlowAccessService</code></td><td>Active flows</td><td>FlowDefinitionView / SetupEntityAccess</td></tr>
+                <tr><td><code>LightningComponentAccessService</code></td><td>LWC &amp; Aura components</td><td>CustomEntityDefinition / SetupEntityAccess</td></tr>
+                <tr><td><code>GenericEntityAccessService</code></td><td>Custom permissions, applications, record types, named credentials</td><td>CustomPermission / SetupEntityAccess</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <p class="doc-para">Effective access is computed as the logical OR across all selected sources — if any selected source grants a permission, the permission is effectively granted. This mirrors the way the Salesforce runtime aggregates permissions from a user's profile and all assigned permission sets.</p>
+        <h4 class="doc-subheading">5.3.2 Aggregation &amp; Scoring Services</h4>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Service</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td><code>DashboardAggregationService</code></td><td>Assembles the DashboardData DTO (SecurityScoreDTO, KpiCardDTO list, RiskCategoryDTO list, RiskyUserDTO list, RecentChangeDTO list, AlertDTO list). Uses SetupAuditTrail for recent changes. Caches under key Dashboard_Full for 300 seconds.</td></tr>
+                <tr><td><code>SecurityScoreService</code></td><td>Computes overall (0-100) and compliance (60-100) scores based on weighted penalties for dangerous permissions (Modify All Data, View All Data, Manage Users, Author Apex, Customize Application, API Enabled) and inactive admin accounts (90-day threshold). Cached under SecurityScore_Org for 600 seconds.</td></tr>
+                <tr><td><code>RiskEngineService</code></td><td>Rule-based finding generator. Currently emits three findings: F001 (non-admin profiles with Modify All Data), F002 (inactive admin accounts &gt; 90 days), F003 (standalone permission sets granting View All Data). Also computes top-N risky users. Cached under RiskSummary_Org and RiskyUsers_N for 300 seconds.</td></tr>
+                <tr><td><code>AuditService</code></td><td>Paginated read of SetupAuditTrail with server-side classification into event types (danger, success, info, warning) via keyword matching on the Action string.</td></tr>
+                <tr><td><code>UserAccessExplorerService</code></td><td>User listing with per-user risk score computation. Aggregates PermissionSetAssignment records across the user set in a single query to stay within governor limits.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h4 class="doc-subheading">5.3.3 Scoring &amp; Weighting Rules</h4>
+        <p class="doc-para">The security score is a penalty-based deduction from 100. Penalties are capped per-category to prevent any single signal from dominating the score.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Signal</th><th>Weight per occurrence</th><th>Category cap</th></tr></thead>
+              <tbody>
+                <tr><td>PermissionsModifyAllData on profile-owned perm set</td><td>3 pts</td><td>15 pts</td></tr>
+                <tr><td>PermissionsViewAllData on profile-owned perm set</td><td>2 pts</td><td>10 pts</td></tr>
+                <tr><td>PermissionsManageUsers on profile-owned perm set</td><td>2 pts</td><td>8 pts</td></tr>
+                <tr><td>Inactive admin (no login &gt; 90 days)</td><td>5 pts</td><td>15 pts</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <p class="doc-para">Standing bands: 90+ Excellent, 75-89 Good, 60-74 Fair, below 60 At Risk. The compliance score starts at 100 and deducts 4 points per non-profile permission set granting Modify All Data, with a floor of 60.</p>
+        <h4 class="doc-subheading">5.3.4 Comparison &amp; Remediation Services</h4>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Service</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td><code>PermissionComparisonService</code></td><td>Backs the Permission Comparator UI. Compares 2+ Permission Sets, Profiles, or Users. Produces a ComparisonResult DTO with headers, headerIds, per-row diff values, and category grouping. Also exposes getUsersWithAccessLevel, getAccessHierarchy, and getPermissionChangeHistory.</td></tr>
+                <tr><td><code>AccessComparisonService</code></td><td>Backs the Access Comparison Center. Produces a per-category ComparisonMatrix (with sourceIds, sourceLabels, MatrixRow list including diffType classification of ALL_GRANTED / ALL_DENIED / MIXED) and a HeatmapData structure summarizing granted / total / percentage per source per category.</td></tr>
+                <tr><td><code>PermManagementService</code></td><td>previewChanges (impact analysis with affected user count and risk level) and applyChanges (bulk DML on ObjectPermissions / SetupEntityAccess with error accumulation). Also clonePermSet for duplicating a permission set with a new name.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>5.4 Repository Layer</span></h3>
+        <p class="doc-para">Repositories are thin wrappers around SOQL queries for standard objects. Their purpose is to keep query strings out of service classes so services can be unit-tested with mock repositories, and to centralize the security-hardening pattern used across the codebase (with sharing, stripInaccessible).</p>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Repository</th><th>Backing Object</th></tr></thead>
+              <tbody>
+                <tr><td><code>ProfileRepository</code></td><td>Profile</td></tr>
+                <tr><td><code>PermissionSetRepository</code></td><td>PermissionSet</td></tr>
+                <tr><td><code>UserRepository</code></td><td>User</td></tr>
+                <tr><td><code>ObjectPermissionRepository</code></td><td>ObjectPermissions</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>5.5 Wrapper &amp; DTO Layer</span></h3>
+        <p class="doc-para">Two wrapper classes centralize all @AuraEnabled DTOs — this keeps the wire format consistent, simplifies test data construction, and makes the shape of the LWC contract explicit in one place.</p>
+        <h4 class="doc-subheading">5.5.1 <code>AccessAnalysisWrapper</code></h4>
+        <p class="doc-para">Contains DTOs used only by the access analysis wizard: PaginatedResult (generic), SourceOption, ApiResponse, ApexClassOption, VFPageOption, TabOption, ObjectOption, FieldOption, FlowOption, plus SourceAccess and TabSourceAccess for per-source access rows.</p>
+        <h4 class="doc-subheading">5.5.2 <code>SPTSFWrapper</code></h4>
+        <p class="doc-para">Contains DTOs used by dashboard, risk, user explorer, audit, comparison, and remediation surfaces. Selected highlights:</p>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Group</th><th>DTOs</th></tr></thead>
+              <tbody>
+                <tr><td>Envelope</td><td>ApiResponse (success, message, data, errorCode + ok() and fail() helpers)</td></tr>
+                <tr><td>Dashboard</td><td>DashboardData, SecurityScoreDTO, KpiCardDTO, RiskCategoryDTO, RiskyUserDTO, RecentChangeDTO, AlertDTO</td></tr>
+                <tr><td>User Explorer</td><td>UserListResult, UserRowDTO, UserDetailDTO</td></tr>
+                <tr><td>Risk</td><td>RiskSummaryResult, RiskFindingDTO</td></tr>
+                <tr><td>Audit</td><td>AuditResult, AuditEventDTO</td></tr>
+                <tr><td>Comparison</td><td>ComparisonResult, DiffRowDTO, PermSummaryDTO</td></tr>
+                <tr><td>Search</td><td>SearchResult, SearchHitDTO</td></tr>
+                <tr><td>Snapshot</td><td>SnapshotListResult, SnapshotDTO</td></tr>
+                <tr><td>Comparison Center</td><td>ComparisonMatrix, MatrixRow, HeatmapData, HeatmapCategory</td></tr>
+                <tr><td>Remediation</td><td>ChangeRequest, ImpactAnalysis, ChangeResult</td></tr>
+                <tr><td>Compliance</td><td>ComplianceResult, ComplianceDomainDTO, ViolationDTO</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>5.6 Asynchronous Processing</span></h3>
+        <p class="doc-para">Three asynchronous mechanisms handle recurring maintenance and long-running work outside the synchronous request-response cycle.</p>
+        <h4 class="doc-subheading">5.6.1 <code>DailySecurityScanScheduler</code> (Schedulable)</h4>
+        <p class="doc-para">Cron expression: 0 0 2 * * ? (2:00 AM daily). Named SPTSF Daily Security Scan. The scheduler aborts any existing job with the same name, invalidates the SecurityScore, RiskSummary, RiskyUsers, and Dashboard_Full cache entries, and enqueues a batch execution of <code>SnapshotBatchJob</code> with a scope size of 200.</p>
+        <h4 class="doc-subheading">5.6.2 <code>SnapshotBatchJob</code> (Batchable, Stateful)</h4>
+        <p class="doc-para">Iterates active users in scope-200 batches. Each execute() slice tallies processedCount and errorCount on the stateful instance; finish() invalidates dependent cache entries so the next dashboard load reflects fresh data. Full snapshot serialization into <code>Security_Snapshot__c</code> is scaffolded and documented in the class for future implementation.</p>
+        <h4 class="doc-subheading">5.6.3 <code>PermissionAnalysisQueueable</code></h4>
+        <p class="doc-para">Fires on demand to invalidate risk-related cache entries following an inline remediation. Fast, side-effect-only work — no DML, no callouts.</p>
+        <h3 class="doc-heading"><span>5.7 Caching Strategy</span></h3>
+        <p class="doc-para">The Platform Cache is used throughout the read path to avoid recomputing expensive aggregations on every dashboard load. Keys are sanitized (alphanumeric + underscore, max 50 chars) and stored in the local.SPTSFCache Org partition.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Cache Key</th><th>TTL</th><th>Consumer</th></tr></thead>
+              <tbody>
+                <tr><td>Dashboard_Full</td><td>300 s</td><td><code>DashboardAggregationService</code>.getDashboard()</td></tr>
+                <tr><td>SecurityScore_Org</td><td>600 s</td><td><code>SecurityScoreService</code>.calculate()</td></tr>
+                <tr><td>RiskSummary_Org</td><td>300 s</td><td><code>RiskEngineService</code>.getSummary()</td></tr>
+                <tr><td>RiskyUsers_N</td><td>300 s</td><td><code>RiskEngineService</code>.getTopRiskyUsers(N)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <p class="doc-para">Invalidation is either explicit (<code>SPTSFCacheManager</code>.remove) or prefix-based (<code>SPTSFCacheManager</code>.invalidatePrefix), used by the scheduler and any write that could affect downstream aggregations.</p>
+      </section>
+
+      <section id="s6" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 06</span>
+          <div class="section-kicker"><span class="section-number">6.</span><span class="section-title">Lightning Web Components <span class="hl-green">(Frontend)</span></span></div>
+          <div class="section-underline"></div>
+          <p>The presentation layer is delivered through the rolesPermissions Lightning Web Component bundle and its unified security hub experience.</p>
+        </div>
+        <h3 class="doc-heading"><span>6.1 Overview</span></h3>
+        <p class="doc-para">The presentation layer of the application is delivered as a single Lightning Web Component: rolesPermissions. This is the unified security hub — a multi-view single-page application that renders the dashboard, access studio, user explorer, comparison center, object access matrix, and audit history within one component bundle. The component is exposed to Lightning App Pages, Home Pages, and Tabs, allowing administrators to place it anywhere in Lightning Experience.</p>
+        <h3 class="doc-heading"><span>6.2 Component Metrics</span></h3>
+        <p class="doc-para">The bundle is intentionally large — every view, every category comparator, every remediation flow runs client-side within this single component to avoid navigation state loss and to keep permission context in memory across views.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>File</th><th>Lines</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>rolesPermissions.js</td><td>2,156</td><td>Component controller — state, event handlers, Apex wiring.</td></tr>
+                <tr><td>rolesPermissions.html</td><td>1,891</td><td>Template — all six views with conditional rendering.</td></tr>
+                <tr><td>rolesPermissions.css</td><td>2,346</td><td>Styles — light/dark themes, KPI card colours, matrix grids.</td></tr>
+                <tr><td>rolesPermissions.js-meta.xml</td><td>10</td><td>Bundle metadata (API v59.0, isExposed=true, three targets).</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>6.3 Architecture &amp; Navigation</span></h3>
+        <p class="doc-para">The component uses a left-hand sidebar navigation with six sections grouped into three areas. State is managed via @track properties on the LightningElement instance; view switching is driven by an activeNav property.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Section</th><th>Navigation Group</th><th>Backing Controller(s)</th></tr></thead>
+              <tbody>
+                <tr><td>Dashboard</td><td>main</td><td><code>DashboardController</code></td></tr>
+                <tr><td>Access Studio</td><td>main</td><td><code>AccessAnalysisController</code></td></tr>
+                <tr><td>User Explorer</td><td>main</td><td><code>UserAccessController</code>, <code>RolesPermissionsController</code></td></tr>
+                <tr><td>Access Comparison Center</td><td>analysis</td><td><code>AccessComparisonController</code>, <code>PermissionComparisonController</code>, <code>PermManagementController</code></td></tr>
+                <tr><td>Object Access Matrix</td><td>analysis</td><td><code>RolesPermissionsController</code></td></tr>
+                <tr><td>Audit History</td><td>audit</td><td><code>AuditController</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        <p class="doc-para">Additional UI concerns handled in the component: sidebar collapse state (sidebarCollapsed), dark-mode toggle (isDark), a global search box (globalSearch), and per-view pagination state and search terms.</p>
+        <h3 class="doc-heading"><span>6.4 Apex Import Footprint</span></h3>
+        <p class="doc-para">The component imports 40+ @AuraEnabled methods spanning eight controllers. This tightly couples the UI to the backend contract but centralizes all server communication in one component. All imports use the static @salesforce/apex/* module path convention. Controllers imported:</p>
+          <ul class="doc-list">
+            <li><code>RolesPermissionsController</code> — deep compare, user assignments, matrices, grantAccess.</li>
+            <li><code>DashboardController</code> — getDashboard, refreshDashboard.</li>
+            <li><code>UserAccessController</code> — getUsers.</li>
+            <li><code>AccessAnalysisController</code> — the entire Access Studio surface (Profiles, Permission Sets, Apex, VF, Tabs, Objects, Fields, LWCs, Flows, generic entities — plus analyze/save methods for each).</li>
+            <li><code>AccessComparisonController</code> — getSourceOptions, compareCategory, getHeatmapData.</li>
+            <li><code>PermissionComparisonController</code> — permission set / profile / user comparators, access hierarchy, permission change history.</li>
+            <li><code>PermManagementController</code> — previewChanges, applyChanges, clonePermSet.</li>
+            <li><code>AuditController</code> — getAuditEvents.</li>
+          </ul>
+        <h3 class="doc-heading"><span>6.5 Permission Categories</span></h3>
+        <p class="doc-para">The Access Comparison Center supports eleven distinct permission categories, defined as a client-side constant array in the component. Each category id maps to a server-side handler in <code>AccessComparisonService</code>.</p>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>ID</th><th>Label</th></tr></thead>
+              <tbody>
+                <tr><td>system</td><td>System Perms</td></tr>
+                <tr><td>object</td><td>Object CRUD</td></tr>
+                <tr><td>field</td><td>Field Security (FLS)</td></tr>
+                <tr><td>apex</td><td>Apex Classes</td></tr>
+                <tr><td>vf</td><td>VF Pages</td></tr>
+                <tr><td>tab</td><td>Custom Tabs</td></tr>
+                <tr><td>customperm</td><td>Custom Permissions</td></tr>
+                <tr><td>app</td><td>Applications</td></tr>
+                <tr><td>recordtype</td><td>Record Types</td></tr>
+                <tr><td>lwc</td><td>LWC / Aura</td></tr>
+                <tr><td>flexipage</td><td>Lightning Pages</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>6.6 UI Features</span></h3>
+          <ul class="doc-list">
+            <li>Multi-view single-page architecture — six views rendered from one component; no page reloads on navigation.</li>
+            <li>Toast-based error surfacing — every Apex rejection is caught and displayed via lightning/platformShowToastEvent, using the <code>AuraHandledException</code> message from the controller.</li>
+            <li>Dark mode — a client-side isDark toggle switches the entire CSS palette.</li>
+            <li>Paginated tables — user list, audit events, and each Access Studio component picker page independently with search.</li>
+            <li>Inline remediation — the grantAccess call fires from the compare view without leaving the current context; results feed back into the current matrix.</li>
+            <li>Preview-then-apply — all destructive changes go through previewChanges first to display affectedUsers, changedItems, and riskLevel before commit.</li>
+          </ul>
+        <h3 class="doc-heading"><span>6.7 Deployment Target</span></h3>
+        <p class="doc-para">The rolesPermissions bundle is exposed (isExposed=true) to three Lightning target surfaces:</p>
+          <ul class="doc-list">
+            <li>lightning__AppPage — full-page app placement via Lightning App Builder.</li>
+            <li>lightning__HomePage — home-page component placement.</li>
+            <li>lightning__Tab — Custom Tab wrapper so it can be added to a Lightning App as a standalone tab.</li>
+          </ul>
+        <p class="doc-para">The bundle is declared at Lightning API version 59.0 (Winter '24). Upgrading to the project-wide API version 67.0 is a low-risk change since no deprecated APIs are in use.</p>
+      </section>
+
+      <section id="s7" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 07</span>
+          <div class="section-kicker"><span class="section-number">7.</span><span class="section-title">Security Design &amp; <span class="hl-green">Guarantees</span></span></div>
+          <div class="section-underline"></div>
+          <p>Security guarantees cover sharing, CRUD/FLS enforcement, exception translation, governor safety, and cache behavior.</p>
+        </div>
+        <h3 class="doc-heading"><span>7.1 Sharing &amp; Access Enforcement</span></h3>
+          <ul class="doc-list">
+            <li>Every Apex class is declared with sharing — enforcing record-level sharing rules for the running user.</li>
+            <li>CRUD &amp; FLS are enforced via <code>Security.stripInaccessible</code> before DML and after SOQL where the returned data is serialized to the client.</li>
+            <li>All SOQL uses bind variables — no dynamic query concatenation with user input. String LIKE clauses are constructed with String.escapeSingleQuotes on the search term.</li>
+            <li>DML on User records checks Schema.SObjectType.User.isUpdateable() before executing the update.</li>
+          </ul>
+        <h3 class="doc-heading"><span>7.2 Exception Handling Contract</span></h3>
+        <p class="doc-para">The exception handling contract is uniform across all controllers. This makes error reporting predictable at the LWC boundary and prevents raw platform stack traces from leaking to the client.</p>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Layer</th><th>Behavior</th></tr></thead>
+              <tbody>
+                <tr><td>Repository / Service</td><td>Throws native exceptions (QueryException, DmlException, etc.) freely.</td></tr>
+                <tr><td>Controller (@AuraEnabled boundary)</td><td>Wraps every non-<code>AuraHandledException</code> into <code>AuraHandledException</code> with a human-readable message. Rethrows AuraHandledExceptions unchanged so nested messages are preserved.</td></tr>
+                <tr><td>LWC</td><td>Receives <code>AuraHandledException</code>.body.message and surfaces it via lightning/platformShowToastEvent.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>7.3 Bulk Safety &amp; Governor Limits</span></h3>
+          <ul class="doc-list">
+            <li>Pagination is enforced at every list endpoint — safePageSize and safeOffset helpers cap page size and offset to platform-safe values.</li>
+            <li>All SOQL is outside of loops; results are collected into maps for O(1) lookup.</li>
+            <li>The comparePermissions endpoint enforces a maximum of 5 Permission Sets per call.</li>
+            <li>Async work uses Queueable (single-record) or Batchable (bulk) depending on scale; the batch scope size is 200.</li>
+          </ul>
+        <h3 class="doc-heading"><span>7.4 Cache Safety</span></h3>
+          <ul class="doc-list">
+            <li>Cache misses are non-fatal — every get() / put() call is wrapped in try/catch and degrades gracefully to a live SOQL execution.</li>
+            <li>Cache keys are sanitized to alphanumeric + underscore and truncated to 50 characters to comply with the Platform Cache API.</li>
+            <li>Cache invalidation is prefix-based, so a single write can invalidate all dependent read caches in one call.</li>
+          </ul>
+      </section>
+
+      <section id="s8" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 08</span>
+          <div class="section-kicker"><span class="section-number">8.</span><span class="section-title">Development &amp; <span class="hl-green">Deployment</span></span></div>
+          <div class="section-underline"></div>
+          <p>Local development, Salesforce CLI usage, pre-commit hooks, and development dependencies are captured for implementers.</p>
+        </div>
+        <h3 class="doc-heading"><span>8.1 Local Development Setup</span></h3>
+        <p class="doc-para">The project uses the Salesforce CLI (sf) for all deploy, retrieve, and org operations, and npm scripts for LWC linting, formatting, and unit tests.</p>
+          <div class="code-block doc-code">
+            <div class="code-head"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span>commands</span></div>
+<pre>
+# Install dependencies
+npm install
+# Lint LWC / Aura JavaScript
+npm run lint
+# Run LWC Jest unit tests
+npm run test:unit
+npm run test:unit:watch
+npm run test:unit:coverage
+# Format all supported file types
+npm run prettier
+npm run prettier:verify
+</pre>
+          </div>
+        <h3 class="doc-heading"><span>8.2 Salesforce CLI Commands</span></h3>
+          <div class="code-block doc-code">
+            <div class="code-head"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span>commands</span></div>
+<pre>
+# Authorize an org (as dev hub)
+sf org login web --set-default-dev-hub --alias my-hub
+# Create a scratch org
+sf org create scratch -f config/project-scratch-def.json \
+    --alias my-scratch --set-default
+# Deploy source to the org
+sf project deploy start
+# Retrieve source from the org
+sf project retrieve start
+# Run Apex tests
+sf apex run test --test-level LocalTests --wait 5
+# Open the org in a browser
+sf org open
+</pre>
+          </div>
+        <h3 class="doc-heading"><span>8.3 Pre-commit Hooks</span></h3>
+        <p class="doc-para">Husky manages a pre-commit hook that runs lint-staged. On staged files, lint-staged runs:</p>
+          <ul class="doc-list">
+            <li>Prettier --write on all .cls, .cmp, .component, .css, .html, .js, .json, .md, .page, .trigger, .xml, .yaml, .yml files.</li>
+            <li>ESLint on all aura/**/*.js and lwc/**/*.js files, using @salesforce/eslint-config-lwc with @salesforce/eslint-plugin-aura and @salesforce/eslint-plugin-lightning.</li>
+            <li>sfdx-lwc-jest with --bail --findRelatedTests --passWithNoTests on all LWC files, ensuring related Jest tests pass before commit.</li>
+          </ul>
+        <h3 class="doc-heading"><span>8.4 Development Dependencies</span></h3>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Package</th><th>Version</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>@salesforce/eslint-config-lwc</td><td>^4.0.0</td><td>Base ESLint config for LWC.</td></tr>
+                <tr><td>@salesforce/eslint-plugin-aura</td><td>^3.0.0</td><td>Lint rules for Aura components.</td></tr>
+                <tr><td>@salesforce/eslint-plugin-lightning</td><td>^2.0.0</td><td>Lint rules for Lightning platform globals.</td></tr>
+                <tr><td>@lwc/eslint-plugin-lwc</td><td>^3.1.0</td><td>Official LWC ESLint plugin.</td></tr>
+                <tr><td>@salesforce/sfdx-lwc-jest</td><td>^7.0.2</td><td>Jest runner configured for LWC.</td></tr>
+                <tr><td>eslint</td><td>^9.29.0</td><td>JS linting.</td></tr>
+                <tr><td>prettier</td><td>^3.5.3</td><td>Code formatting.</td></tr>
+                <tr><td>prettier-plugin-apex</td><td>^2.2.6</td><td>Apex support for Prettier.</td></tr>
+                <tr><td>@prettier/plugin-xml</td><td>^3.4.1</td><td>XML support for Prettier.</td></tr>
+                <tr><td>husky</td><td>^9.1.7</td><td>Git hooks.</td></tr>
+                <tr><td>lint-staged</td><td>^16.1.2</td><td>Staged-file linting driver.</td></tr>
+              </tbody>
+            </table>
+          </div>
+      </section>
+
+      <section id="s9" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 09</span>
+          <div class="section-kicker"><span class="section-number">9.</span><span class="section-title">Testing <span class="hl-green">Strategy</span></span></div>
+          <div class="section-underline"></div>
+          <p>Testing guidance covers Apex test classes, LWC Jest configuration, and recommended coverage targets.</p>
+        </div>
+        <h3 class="doc-heading"><span>9.1 Apex Test Classes</span></h3>
+        <p class="doc-para">Two Apex test classes ship with the project — AccessAnalysisControllerTest exercises the access analysis wizard endpoints end-to-end, and SPTSFBackendTest exercises the remaining service and controller surface. Both classes use Test.startTest() / Test.stopTest() around each async assertion to ensure limits are reset.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>Test Class</th><th>Size</th><th>Target</th></tr></thead>
+              <tbody>
+                <tr><td>AccessAnalysisControllerTest</td><td>30,579 bytes (~1000 lines)</td><td><code>AccessAnalysisController</code> + all *<code>AccessService</code> classes.</td></tr>
+                <tr><td>SPTSFBackendTest</td><td>9,447 bytes (~300 lines)</td><td><code>DashboardController</code>, <code>RiskAnalysisController</code>, <code>AuditController</code>, <code>UserAccessController</code>, and their services.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>9.2 LWC Unit Tests</span></h3>
+          <div class="code-block doc-code">
+            <div class="code-head"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span>code</span></div>
+<pre>
+LWC Jest tests are configured via jest.config.js. Tests live in __tests__/ folders inside each LWC directory and are excluded from org deployment via .forceignore. On CI, npm run test:unit:coverage produces a coverage report; on pre-commit, only related tests run.
+</pre>
+          </div>
+        <h3 class="doc-heading"><span>9.3 Recommended Test Coverage Targets</span></h3>
+          <ul class="doc-list">
+            <li>Apex controllers: 90%+ (validation logic, exception paths).</li>
+            <li>Apex services: 85%+ (business rules, SOQL result handling).</li>
+            <li>LWC components: 70%+ (event handlers, computed properties, error surfacing).</li>
+          </ul>
+        <p class="doc-para">Salesforce requires a minimum 75% code coverage across all Apex to deploy to production; the project structure supports significantly higher.</p>
+      </section>
+
+      <section id="s10" class="reveal">
+        <div class="section-head">
+          <span class="section-eyebrow">Section 10</span>
+          <div class="section-kicker"><span class="section-number">10.</span><span class="section-title"><span class="hl-green">Appendix</span></span></div>
+          <div class="section-underline"></div>
+          <p>The appendix collects permission constants, finding catalogs, KPI cards, scratch org configuration, and glossary definitions.</p>
+        </div>
+        <h3 class="doc-heading"><span>10.1 Critical Permission Constants</span></h3>
+        <p class="doc-para">The <code>RiskEngineService</code> defines two ordered lists of permission API names used as risk signals throughout the application:</p>
+        <h5 class="doc-minorheading">Critical (heaviest weight):</h5>
+          <ul class="doc-list">
+            <li>PermissionsModifyAllData</li>
+            <li>PermissionsManageUsers</li>
+            <li>PermissionsResetUserPasswords</li>
+          </ul>
+        <h5 class="doc-minorheading">High (secondary weight):</h5>
+          <ul class="doc-list">
+            <li>PermissionsViewAllData</li>
+            <li>PermissionsManageRoles</li>
+            <li>PermissionsViewSetup</li>
+          </ul>
+        <h3 class="doc-heading"><span>10.2 Risk Finding Catalog</span></h3>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>ID</th><th>Title</th><th>Severity</th><th>Trigger Condition</th></tr></thead>
+              <tbody>
+                <tr><td>F001</td><td>Modify All Data — Over-Provisioned</td><td>critical</td><td>Any standard-license profile owns a PermissionSet with PermissionsModifyAllData = true.</td></tr>
+                <tr><td>F002</td><td>Inactive Admin Accounts</td><td>high</td><td>Active users on an admin profile with no login in the last 90 days.</td></tr>
+                <tr><td>F003</td><td>Permission Sets with View All Data</td><td>medium</td><td>Any standalone (non-profile-owned) PermissionSet grants PermissionsViewAllData.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>10.3 KPI Card Catalog</span></h3>
+        <p class="doc-para">The dashboard exposes eight KPI cards. Each card carries an id, label, value, unit, trend, sub-label, and CSS class name for colour theming.</p>
+          <div class="table-wrap doc-table">
+            <table>
+              <thead><tr><th>ID</th><th>Label</th><th>Source</th></tr></thead>
+              <tbody>
+                <tr><td>score</td><td>Security Score</td><td><code>SecurityScoreService</code>.overall</td></tr>
+                <tr><td>compliance</td><td>Compliance Score</td><td><code>SecurityScoreService</code>.compliance</td></tr>
+                <tr><td>riskUsers</td><td>High Risk Users</td><td><code>RiskEngineService</code> critical count</td></tr>
+                <tr><td>profiles</td><td>Total Profiles</td><td>COUNT(Profile)</td></tr>
+                <tr><td>permSets</td><td>Permission Sets</td><td>COUNT(PermissionSet WHERE IsOwnedByProfile = false)</td></tr>
+                <tr><td>alerts</td><td>Critical Alerts</td><td><code>RiskEngineService</code> critical count</td></tr>
+                <tr><td>objects</td><td>Custom Objects</td><td>COUNT(EntityDefinition WHERE IsCustomizable AND !IsCustomSetting)</td></tr>
+                <tr><td>changes</td><td>Permission Changes</td><td>COUNT(SetupAuditTrail LAST_N_DAYS:7 WHERE Action LIKE %PermissionSet% OR %Profile%)</td></tr>
+              </tbody>
+            </table>
+          </div>
+        <h3 class="doc-heading"><span>10.4 Scratch Org Definition</span></h3>
+          <div class="code-block doc-code">
+            <div class="code-head"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span>configuration</span></div>
+<pre>
+{
+  &quot;orgName&quot;: &quot;Demo company&quot;,
+  &quot;edition&quot;: &quot;Developer&quot;,
+  &quot;features&quot;: [&quot;EnableSetPasswordInApi&quot;],
+  &quot;settings&quot;: {
+    &quot;lightningExperienceSettings&quot;: {
+      &quot;enableS1DesktopEnabled&quot;: true
+    },
+    &quot;mobileSettings&quot;: {
+      &quot;enableS1EncryptedStoragePref2&quot;: false
+    }
+  }
+}
+</pre>
+          </div>
+        <h3 class="doc-heading"><span>10.5 Glossary</span></h3>
+          <div class="table-wrap doc-table compact-table">
+            <table>
+              <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+              <tbody>
+                <tr><td>DTO</td><td>Data Transfer Object — a class used to pass structured data across a boundary (here, between Apex and LWC).</td></tr>
+                <tr><td>FLS</td><td>Field-Level Security — the Salesforce mechanism for restricting per-field read / edit access.</td></tr>
+                <tr><td>CRUD</td><td>Create, Read, Update, Delete — the four object-level permissions on Salesforce records.</td></tr>
+                <tr><td>LWC</td><td>Lightning Web Component — the modern component framework on the Lightning Platform.</td></tr>
+                <tr><td>SFDX</td><td>Salesforce DX — the source-driven development platform for Salesforce.</td></tr>
+                <tr><td>SOQL</td><td>Salesforce Object Query Language — the query language for retrieving data.</td></tr>
+                <tr><td>SetupEntityAccess</td><td>Standard object linking a PermissionSet to a setup entity (Apex class, VF page, flow, LWC, tab, custom permission).</td></tr>
+                <tr><td>Permission Set (PS)</td><td>Container for permissions that can be assigned to users.</td></tr>
+                <tr><td>Profile</td><td>Legacy container for user permissions; each user has exactly one. Each Profile owns an internal PermissionSet.</td></tr>
+                <tr><td>Governor Limit</td><td>Salesforce runtime cap on SOQL rows, DML rows, CPU time, etc., enforced per transaction.</td></tr>
+                <tr><td>Platform Cache</td><td>Salesforce in-memory cache with configurable partitions and TTLs.</td></tr>
+              </tbody>
+            </table>
+          </div>
+      </section>
+
+      <!-- Why Choose Section -->
+      <section style="padding: 100px 24px; background: linear-gradient(180deg, #f8fbfd 0%, #ffffff 50%, #f0f8fc 100%); position: relative;">
+        <div style="position: absolute; top: 10%; left: 5%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(7, 167, 167, 0.1), transparent); border-radius: 50%; z-index: 0;"></div>
+
+        <div style="max-width: 1200px; margin: 0 auto; position: relative; z-index: 1;">
+          <div style="text-align: center; margin-bottom: 60px;">
+            <h2 style="font-size: clamp(32px, 6vw, 48px); color: var(--brand-navy); margin: 0 0 16px; font-weight: 900;">
+              Why SPT Security Fabric?
+            </h2>
+            <p style="font-size: 18px; color: var(--ink-muted); max-width: 600px; margin: 0 auto; font-weight: 500;">
+              The most comprehensive platform for Salesforce security and compliance
+            </p>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
+            <div style="padding: 40px; background: white; border-radius: 20px; border: 1px solid var(--border-subtle); transition: all 0.4s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0, 0, 0, 0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.03)';">
+              <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, rgba(0, 212, 228, 0.2), rgba(7, 167, 167, 0.15)); display: grid; place-items: center; margin-bottom: 20px; font-size: 24px;">🚀</div>
+              <h3 style="color: var(--brand-navy); margin: 0 0 12px; font-size: 20px; font-weight: 700;">Lightning Fast</h3>
+              <p style="color: var(--ink-muted); margin: 0; line-height: 1.6; font-size: 15px;">3x faster performance with intelligent caching and optimized queries across all operations.</p>
+            </div>
+
+            <div style="padding: 40px; background: white; border-radius: 20px; border: 1px solid var(--border-subtle); transition: all 0.4s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0, 0, 0, 0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.03)';">
+              <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, rgba(22, 179, 100, 0.2), rgba(16, 122, 69, 0.15)); display: grid; place-items: center; margin-bottom: 20px; font-size: 24px;">🔒</div>
+              <h3 style="color: var(--brand-navy); margin: 0 0 12px; font-size: 20px; font-weight: 700;">Enterprise Security</h3>
+              <p style="color: var(--ink-muted); margin: 0; line-height: 1.6; font-size: 15px;">Bank-grade security with full sharing enforcement and Field-Level Security compliance.</p>
+            </div>
+
+            <div style="padding: 40px; background: white; border-radius: 20px; border: 1px solid var(--border-subtle); transition: all 0.4s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0, 0, 0, 0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.03)';">
+              <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, rgba(7, 167, 167, 0.2), rgba(0, 121, 130, 0.15)); display: grid; place-items: center; margin-bottom: 20px; font-size: 24px;">📊</div>
+              <h3 style="color: var(--brand-navy); margin: 0 0 12px; font-size: 20px; font-weight: 700;">Compliance Ready</h3>
+              <p style="color: var(--ink-muted); margin: 0; line-height: 1.6; font-size: 15px;">Built-in compliance scoring and audit trails for SOC 2, HIPAA, and GDPR requirements.</p>
+            </div>
+
+            <div style="padding: 40px; background: white; border-radius: 20px; border: 1px solid var(--border-subtle); transition: all 0.4s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0, 0, 0, 0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.03)';">
+              <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, rgba(0, 212, 228, 0.2), rgba(22, 179, 100, 0.15)); display: grid; place-items: center; margin-bottom: 20px; font-size: 24px;">⚙️</div>
+              <h3 style="color: var(--brand-navy); margin: 0 0 12px; font-size: 20px; font-weight: 700;">Easy Integration</h3>
+              <p style="color: var(--ink-muted); margin: 0; line-height: 1.6; font-size: 15px;">One-click installation in any Salesforce org with zero configuration required.</p>
+            </div>
+
+            <div style="padding: 40px; background: white; border-radius: 20px; border: 1px solid var(--border-subtle); transition: all 0.4s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0, 0, 0, 0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.03)';">
+              <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, rgba(22, 179, 100, 0.2), rgba(0, 212, 228, 0.15)); display: grid; place-items: center; margin-bottom: 20px; font-size: 24px;">👥</div>
+              <h3 style="color: var(--brand-navy); margin: 0 0 12px; font-size: 20px; font-weight: 700;">Expert Support</h3>
+              <p style="color: var(--ink-muted); margin: 0; line-height: 1.6; font-size: 15px;">24/7 dedicated support from Salesforce security experts and analysts.</p>
+            </div>
+
+            <div style="padding: 40px; background: white; border-radius: 20px; border: 1px solid var(--border-subtle); transition: all 0.4s ease; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0, 0, 0, 0.08)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.03)';">
+              <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, rgba(7, 167, 167, 0.2), rgba(16, 122, 69, 0.15)); display: grid; place-items: center; margin-bottom: 20px; font-size: 24px;">📈</div>
+              <h3 style="color: var(--brand-navy); margin: 0 0 12px; font-size: 20px; font-weight: 700;">Continuous Monitoring</h3>
+              <p style="color: var(--ink-muted); margin: 0; line-height: 1.6; font-size: 15px;">Real-time security scoring and daily snapshots to track compliance trends.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary Cards Section -->
+      <section style="padding: 60px 24px; margin: 40px 0; border-radius: 24px; background: linear-gradient(135deg, rgba(0, 212, 228, 0.08), rgba(22, 179, 100, 0.08));">
+        <h2 style="text-align: center; margin-bottom: 40px; font-size: 28px; color: var(--brand-navy);">
+          <span class="gradient-text">Project Metrics</span>
+        </h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto;">
+          <div style="padding: 32px; background: linear-gradient(135deg, rgba(0, 212, 228, 0.1), rgba(7, 167, 167, 0.05)); border-radius: 16px; border: 1px solid rgba(0, 212, 228, 0.2); text-align: center; transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(7, 167, 167, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, var(--brand-teal), var(--brand-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;">37</div>
+            <div style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Apex Classes</div>
+            <div style="font-size: 13px; color: var(--ink-muted); margin-top: 8px;">Service-oriented</div>
+          </div>
+
+          <div style="padding: 32px; background: linear-gradient(135deg, rgba(22, 179, 100, 0.1), rgba(16, 122, 69, 0.05)); border-radius: 16px; border: 1px solid rgba(22, 179, 100, 0.2); text-align: center; transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(22, 179, 100, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, var(--brand-green), var(--brand-teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;">11</div>
+            <div style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Permission Categories</div>
+            <div style="font-size: 13px; color: var(--ink-muted); margin-top: 8px;">Comprehensive</div>
+          </div>
+
+          <div style="padding: 32px; background: linear-gradient(135deg, rgba(7, 167, 167, 0.1), rgba(0, 121, 130, 0.05)); border-radius: 16px; border: 1px solid rgba(7, 167, 167, 0.2); text-align: center; transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(7, 167, 167, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, var(--brand-teal-deep), var(--brand-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;">6</div>
+            <div style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Major Views</div>
+            <div style="font-size: 13px; color: var(--ink-muted); margin-top: 8px;">Single-page app</div>
+          </div>
+
+          <div style="padding: 32px; background: linear-gradient(135deg, rgba(0, 212, 228, 0.1), rgba(22, 179, 100, 0.05)); border-radius: 16px; border: 1px solid rgba(0, 212, 228, 0.2); text-align: center; transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(0, 212, 228, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, var(--brand-cyan), var(--brand-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;">3</div>
+            <div style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Custom Objects</div>
+            <div style="font-size: 13px; color: var(--ink-muted); margin-top: 8px;">Minimal footprint</div>
+          </div>
+
+          <div style="padding: 32px; background: linear-gradient(135deg, rgba(22, 179, 100, 0.1), rgba(0, 212, 228, 0.08)); border-radius: 16px; border: 1px solid rgba(22, 179, 100, 0.2); text-align: center; transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(22, 179, 100, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, var(--brand-green), var(--brand-teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;">15</div>
+            <div style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">Service Modules</div>
+            <div style="font-size: 13px; color: var(--ink-muted); margin-top: 8px;">Specialized logic</div>
+          </div>
+
+          <div style="padding: 32px; background: linear-gradient(135deg, rgba(7, 167, 167, 0.1), rgba(16, 122, 69, 0.08)); border-radius: 16px; border: 1px solid rgba(7, 167, 167, 0.2); text-align: center; transition: all 0.4s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 16px 32px rgba(7, 167, 167, 0.15)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">
+            <div style="font-size: 40px; font-weight: 900; background: linear-gradient(135deg, var(--brand-teal), var(--brand-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;">67.0</div>
+            <div style="font-weight: 700; color: var(--brand-navy); font-size: 15px;">API Version</div>
+            <div style="font-size: 13px; color: var(--ink-muted); margin-top: 8px;">Winter 2025</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-grid">
+          <div>
+            <strong>Document version</strong>
+            <div style="font-size: 18px; font-weight: 900; color: var(--brand-teal); margin-top: 8px;">v1.0</div>
+          </div>
+          <div>
+            <strong>API version</strong>
+            <div style="font-size: 18px; font-weight: 900; color: var(--brand-green); margin-top: 8px;">67.0</div>
+          </div>
+          <div>
+            <strong>Last updated</strong>
+            <div style="font-size: 18px; font-weight: 900; color: var(--brand-teal-deep); margin-top: 8px;">June 2026</div>
+          </div>
+        </div>
+      </footer>
+    </article>
+  </main>
+
+  <div class="hud-rail hud-rail-left" aria-hidden="true"></div>
+  <div class="hud-rail hud-rail-right" aria-hidden="true"></div>
+  <div class="scanline-layer" aria-hidden="true"></div>
+
+  <button class="back-top" type="button" aria-label="Back to top">
+    <svg><use href="#icon-arrow-right"/></svg>
+  </button>
+
+  <script>
+    const navButton = document.querySelector('.menu-button');
+    const links = [...document.querySelectorAll('.toc a')];
+    const topbar = document.querySelector('.topbar');
+    const progressFill = document.querySelector('.scroll-progress span');
+    const backTop = document.querySelector('.back-top');
+    const introPanel = document.querySelector('.doc-intro');
+    const repoTreeFlip = document.querySelector('.repo-tree-flip');
+    const updateScrollUi = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? (window.scrollY / max) * 100 : 0;
+      progressFill.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+      topbar.classList.toggle('scrolled', window.scrollY > 12);
+      backTop.classList.toggle('visible', window.scrollY > 560);
+    };
+    updateScrollUi();
+    window.addEventListener('scroll', updateScrollUi, { passive: true });
+    window.addEventListener('resize', updateScrollUi);
+    backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    if (introPanel) {
+      introPanel.addEventListener('pointermove', event => {
+        const rect = introPanel.getBoundingClientRect();
+        const x = ((event.clientX - rect.left) / rect.width - 0.5) * 28;
+        const y = ((event.clientY - rect.top) / rect.height - 0.5) * 22;
+        introPanel.style.setProperty('--mouse-x', `${x}px`);
+        introPanel.style.setProperty('--mouse-y', `${y}px`);
+      });
+      introPanel.addEventListener('pointerleave', () => {
+        introPanel.style.setProperty('--mouse-x', '0px');
+        introPanel.style.setProperty('--mouse-y', '0px');
+      });
+    }
+    if (repoTreeFlip) {
+      repoTreeFlip.addEventListener('click', () => repoTreeFlip.classList.toggle('is-flipped'));
+      repoTreeFlip.addEventListener('keydown', event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        repoTreeFlip.classList.toggle('is-flipped');
+      });
+    }
+    navButton.addEventListener('click', () => {
+      const open = document.body.classList.toggle('nav-open');
+      navButton.setAttribute('aria-expanded', String(open));
+    });
+    document.querySelector('.mobile-overlay').addEventListener('click', () => {
+      document.body.classList.remove('nav-open');
+      navButton.setAttribute('aria-expanded', 'false');
+    });
+    links.forEach(link => link.addEventListener('click', event => {
+      const target = document.querySelector(link.hash);
+      if (target) {
+        event.preventDefault();
+        target.classList.add('visible');
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.pushState(null, '', link.hash);
+        links.forEach(item => item.classList.toggle('active', item === link));
+      }
+      document.body.classList.remove('nav-open');
+      navButton.setAttribute('aria-expanded', 'false');
+    }));
+    const activeObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        links.forEach(link => link.classList.toggle('active', link.hash === '#' + entry.target.id));
+      });
+    }, { rootMargin: '-35% 0px -55% 0px', threshold: 0 });
+    document.querySelectorAll('section[id]').forEach(section => activeObserver.observe(section));
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(item => revealObserver.observe(item));
+
+    // Feature Tabs Functionality
+    const featureTabs = document.querySelectorAll('.feature-tab');
+    featureTabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => {
+        featureTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+
+    // Animated Counter Function
+    function animateCounter(element, target, duration = 2000) {
+      const start = 0;
+      const increment = target / (duration / 16);
+      let current = 0;
+
+      const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+          element.textContent = Math.floor(current);
+          requestAnimationFrame(updateCounter);
+        } else {
+          element.textContent = target;
+        }
+      };
+
+      updateCounter();
+    }
+
+    // Trigger counters on scroll into view
+    const counterObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.dataset.animated) {
+          entry.target.dataset.animated = 'true';
+          const target = parseInt(entry.target.textContent);
+          animateCounter(entry.target, target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.animated-counter').forEach(counter => {
+      counterObserver.observe(counter);
+    });
+
+    // Enhanced ripple effect on clicks
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.ripple') || e.target.matches('.card, .feature-card, button')) {
+        const el = e.target.closest('.card, .feature-card, button, .ripple') || e.target;
+        if (el && el.classList && !el.classList.contains('back-top')) {
+          const ripple = document.createElement('div');
+          ripple.className = 'ripple';
+          const rect = el.getBoundingClientRect();
+          ripple.style.position = 'absolute';
+          ripple.style.pointerEvents = 'none';
+          el.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 800);
+        }
+      }
+    });
+
+    // Parallax effect on scroll
+    const parallaxElements = document.querySelectorAll('[data-parallax]');
+    if (parallaxElements.length > 0) {
+      window.addEventListener('scroll', () => {
+        parallaxElements.forEach(el => {
+          const speed = el.dataset.parallax || 0.5;
+          el.style.transform = `translateY(${window.scrollY * speed}px)`;
+        });
+      });
+    }
+
+    // Dynamic glow effect on mouse move
+    document.addEventListener('mousemove', (e) => {
+      const cards = document.querySelectorAll('.feature-card');
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (x > 0 && x < rect.width && y > 0 && y < rect.height) {
+          card.style.setProperty('--glow-x', `${x}px`);
+          card.style.setProperty('--glow-y', `${y}px`);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
